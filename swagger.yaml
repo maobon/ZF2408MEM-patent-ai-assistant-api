@@ -1,0 +1,16 @@
+swagger: '2.0'
+info:
+  title: API Demo
+  version: '1.0'
+basePath: /v1
+schemes:
+  - https
+  - http
+paths:
+  /users:
+    get:
+      summary: Get user
+      operationId: get_user
+      responses:
+        '200':
+          description: success
