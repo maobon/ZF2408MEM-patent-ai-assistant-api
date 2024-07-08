@@ -8,9 +8,27 @@ schemes:
   - http
 paths:
   /users:
-    get:
-      summary: Get user
-      operationId: get_user
+    post:
+      summary: Create a new user
+      operationId: create_user
+      parameters:
+        - name: user
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
       responses:
-        '200':
-          description: success
+        '201':
+          description: User created
+        '400':
+          description: Invalid input
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string

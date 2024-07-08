@@ -3,3 +3,8 @@ connexion[swagger-ui] >= 2.6.0
 python_dateutil == 2.6.0
 setuptools >= 21.0.0
 swagger-ui-bundle >= 0.0.2
+
+flask~=3.0.3
+six~=1.15.0
+
+mysql-connector-python
