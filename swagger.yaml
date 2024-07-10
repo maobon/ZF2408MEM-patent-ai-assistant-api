@@ -7,28 +7,36 @@ schemes:
   - https
   - http
 paths:
-  /users:
+  /patent/trend1:
     post:
-      summary: Create a new user
-      operationId: create_user
+      summary: 专利趋势
+      operationId: patent_trend1
       parameters:
         - name: user
           in: body
           required: true
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/Trend1Req'
       responses:
-        '201':
-          description: User created
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Trend1Res'
         '400':
           description: Invalid input
 definitions:
-  User:
+  Trend1Req:
     type: object
     properties:
-      id:
-        type: integer
-      name:
+      industry:
         type: string
-      email:
-        type: string
+  Trend1Res:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          year:
+            type: string
+          num:
+            type: integer
