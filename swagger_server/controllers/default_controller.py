@@ -64,7 +64,7 @@ def patent_applicant(body):  # noqa: E501
         response_json = json.dumps(response, ensure_ascii=False)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
-        return jsonify({'message': 'No data found'}), 404
+        return jsonify({'message': 'No data found'}), 200
 
 
 def patent_area(body):  # noqa: E501
@@ -116,7 +116,7 @@ ORDER BY
         response_json = json.dumps(response, ensure_ascii=False)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
-        return jsonify({'message': 'No data found'}), 404
+        return jsonify({'message': 'No data found'}), 200
 
 
 def patent_trend1(body):  # noqa: E501
@@ -165,7 +165,7 @@ def patent_trend1(body):  # noqa: E501
         response_json = json.dumps(response, ensure_ascii=False)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
-        return jsonify({'message': 'No data found'}), 404
+        return jsonify({'message': 'No data found'}), 200
 
 
 def patent_trend2(body):  # noqa: E501
@@ -229,7 +229,7 @@ ORDER BY
         response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
-        return jsonify({'message': 'No data found'}), 404
+        return jsonify({'message': 'No data found'}), 200
 
 
 def patent_type(body):  # noqa: E501
@@ -268,4 +268,4 @@ def patent_type(body):  # noqa: E501
         response_json = json.dumps(response, ensure_ascii=False)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
-        return jsonify({'message': 'No data found'}), 404
+        return jsonify({'message': 'No data found'}), 200
