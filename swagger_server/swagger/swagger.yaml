@@ -3,7 +3,7 @@ info:
   title: API Demo
   version: "1.0"
 servers:
-- url: /v1
+- url: http://110.42.103.198:22440/v1
 paths:
   /patent/trend1:
     post:

@@ -9,10 +9,11 @@ def create_connection():
     """Create a database connection."""
     try:
         connection = mysql.connector.connect(
-            host='localhost',
-            database='mysql',
+            host='sh-cynosdbmysql-grp-b4dl8b8a.sql.tencentcdb.com',
+            database='patent_ai_assistant',
             user='root',
-            password='12345678'
+            password='mem123456@',
+            port=20501
         )
         if connection.is_connected():
             print("Connected to MySQL database")
