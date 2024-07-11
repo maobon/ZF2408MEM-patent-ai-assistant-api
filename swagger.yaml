@@ -9,10 +9,14 @@ schemes:
 paths:
   /patent/trend1:
     post:
-      summary: 专利趋势
+      summary: 专利趋势1
       operationId: patent_trend1
+      produces:
+        - application/json
+      consumes:
+        - application/json
       parameters:
-        - name: user
+        - name: body
           in: body
           required: true
           schema:
@@ -24,11 +28,97 @@ paths:
             $ref: '#/definitions/Trend1Res'
         '400':
           description: Invalid input
+  /patent/trend2:
+    post:
+      summary: 专利趋势2
+      operationId: patent_trend2
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Trend2Req'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Trend2Res'
+        '400':
+          description: Invalid input
+  /patent/applicant:
+    post:
+      summary: 申请人分析
+      operationId: patent_applicant
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicantReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/ApplicantRes'
+        '400':
+          description: Invalid input
+  /patent/area:
+    post:
+      summary: 地域分析
+      operationId: patent_area
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AreaReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/AreaRes'
+        '400':
+          description: Invalid input
+  /patent/type:
+    post:
+      summary: 地域分析
+      operationId: patent_type
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TypeReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/TypeRes'
+        '400':
+          description: Invalid input
 definitions:
   Trend1Req:
     type: object
     properties:
       industry:
+        type: string
+      area:
         type: string
   Trend1Res:
     type: object
@@ -40,3 +130,74 @@ definitions:
             type: string
           num:
             type: integer
+  Trend2Req:
+    type: object
+    properties:
+      industry:
+        type: string
+      area:
+        type: string
+  Trend2Res:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          year:
+            type: string
+          authorization_num:
+            type: integer
+          apply_num:
+            type: integer
+          proportion:
+            type: integer
+  ApplicantReq:
+    type: object
+    properties:
+      industry:
+        type: string
+      area:
+        type: string
+  ApplicantRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          applicant:
+            type: string
+          num:
+            type: integer
+  AreaReq:
+    type: object
+    properties:
+      industry:
+        type: string
+  AreaRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          year:
+            type: string
+          area:
+            type: string
+          num:
+            type: integer
+  TypeReq:
+    type: object
+    properties:
+      industry:
+        type: string
+  TypeRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          type:
+            type: string
+          num:
+            type: integer
+

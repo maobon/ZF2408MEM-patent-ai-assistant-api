@@ -5,35 +5,255 @@ info:
 servers:
 - url: /v1
 paths:
-  /users:
+  /patent/trend1:
     post:
-      summary: Create a new user
-      operationId: create_user
+      summary: 专利趋势1
+      operationId: patent_trend1
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/Trend1Req'
         required: true
       responses:
-        "201":
-          description: User created
-          content: {}
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trend1Res'
         "400":
           description: Invalid input
           content: {}
-      x-codegen-request-body-name: user
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/trend2:
+    post:
+      summary: 专利趋势2
+      operationId: patent_trend2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trend2Req'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trend2Res'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/applicant:
+    post:
+      summary: 申请人分析
+      operationId: patent_applicant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicantReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicantRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/area:
+    post:
+      summary: 地域分析
+      operationId: patent_area
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/type:
+    post:
+      summary: 地域分析
+      operationId: patent_type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
 components:
   schemas:
-    User:
+    Trend1Req:
       type: object
       properties:
-        id:
+        industry:
+          type: string
+        area:
+          type: string
+    Trend1Res:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Trend1Res_data'
+      example:
+        data:
+          year: year
+          num: 0
+    Trend2Req:
+      type: object
+      properties:
+        industry:
+          type: string
+        area:
+          type: string
+    Trend2Res:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Trend2Res_data'
+      example:
+        data:
+          proportion: 1
+          year: year
+          apply_num: 6
+          authorization_num: 0
+    ApplicantReq:
+      type: object
+      properties:
+        industry:
+          type: string
+        area:
+          type: string
+    ApplicantRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ApplicantRes_data'
+      example:
+        data:
+          num: 0
+          applicant: applicant
+    AreaReq:
+      type: object
+      properties:
+        industry:
+          type: string
+    AreaRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AreaRes_data'
+      example:
+        data:
+          area: area
+          year: year
+          num: 0
+    TypeReq:
+      type: object
+      properties:
+        industry:
+          type: string
+    TypeRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TypeRes_data'
+      example:
+        data:
+          num: 0
+          type: type
+    Trend1Res_data:
+      type: object
+      properties:
+        year:
+          type: string
+        num:
           type: integer
-        name:
+      example:
+        year: year
+        num: 0
+    Trend2Res_data:
+      type: object
+      properties:
+        year:
           type: string
-        email:
+        authorization_num:
+          type: integer
+        apply_num:
+          type: integer
+        proportion:
+          type: integer
+      example:
+        proportion: 1
+        year: year
+        apply_num: 6
+        authorization_num: 0
+    ApplicantRes_data:
+      type: object
+      properties:
+        applicant:
           type: string
+        num:
+          type: integer
+      example:
+        num: 0
+        applicant: applicant
+    AreaRes_data:
+      type: object
+      properties:
+        year:
+          type: string
+        area:
+          type: string
+        num:
+          type: integer
+      example:
+        area: area
+        year: year
+        num: 0
+    TypeRes_data:
+      type: object
+      properties:
+        type:
+          type: string
+        num:
+          type: integer
+      example:
+        num: 0
+        type: type
 x-original-swagger-version: "2.0"
 
