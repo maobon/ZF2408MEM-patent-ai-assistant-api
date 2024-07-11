@@ -150,7 +150,8 @@ definitions:
           apply_num:
             type: integer
           proportion:
-            type: integer
+            type: number
+            format: float
   ApplicantReq:
     type: object
     properties:

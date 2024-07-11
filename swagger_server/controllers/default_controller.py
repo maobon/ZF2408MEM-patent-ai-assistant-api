@@ -189,7 +189,28 @@ def patent_trend2(body):  # noqa: E501
 
     cursor = connection.cursor(dictionary=True)
     query = """
-    
+    SELECT
+    application_area_code,
+    YEAR(application_date) AS year,
+    SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) AS authorization_num,
+    SUM(CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END) AS apply_num,
+    CASE
+        WHEN SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) = 0
+            THEN 0
+        ELSE
+            SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) /
+            SUM(CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END)
+        END AS proportion
+FROM
+    biz_patent
+WHERE
+    YEAR(application_date) BETWEEN 2014 AND 2024
+  AND meta_class LIKE '%%'
+  AND application_area_code LIKE '%%'
+GROUP BY
+    application_area_code, YEAR(application_date)
+ORDER BY
+    application_area_code, year;
     """
     like_pattern1 = f"%{trend2_req.industry}%"
     if trend2_req.industry is None:
@@ -200,6 +221,15 @@ def patent_trend2(body):  # noqa: E501
     cursor.execute(query, (like_pattern1, like_pattern2))
     results = cursor.fetchall()
     close_connection(connection)
+    if results:
+        response = {
+            'data': [{'year': row['year'], 'authorization_num': row['authorization_num'], 'apply_num': row['apply_num'],
+                      'proportion': row['proportion']} for row in results]
+        }
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+    else:
+        return jsonify({'message': 'No data found'}), 404
 
 
 def patent_type(body):  # noqa: E501
