@@ -147,7 +147,7 @@ components:
           $ref: '#/components/schemas/Trend2Res_data'
       example:
         data:
-          proportion: 1
+          proportion: 1.4658129
           year: year
           apply_num: 6
           authorization_num: 0
@@ -216,9 +216,10 @@ components:
         apply_num:
           type: integer
         proportion:
-          type: integer
+          type: number
+          format: float
       example:
-        proportion: 1
+        proportion: 1.4658129
         year: year
         apply_num: 6
         authorization_num: 0

@@ -14,7 +14,7 @@ class Trend2ResData(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, year: str=None, authorization_num: int=None, apply_num: int=None, proportion: int=None):  # noqa: E501
+    def __init__(self, year: str=None, authorization_num: int=None, apply_num: int=None, proportion: float=None):  # noqa: E501
         """Trend2ResData - a model defined in Swagger
 
         :param year: The year of this Trend2ResData.  # noqa: E501
@@ -24,13 +24,13 @@ class Trend2ResData(Model):
         :param apply_num: The apply_num of this Trend2ResData.  # noqa: E501
         :type apply_num: int
         :param proportion: The proportion of this Trend2ResData.  # noqa: E501
-        :type proportion: int
+        :type proportion: float
         """
         self.swagger_types = {
             'year': str,
             'authorization_num': int,
             'apply_num': int,
-            'proportion': int
+            'proportion': float
         }
 
         self.attribute_map = {
@@ -119,22 +119,22 @@ class Trend2ResData(Model):
         self._apply_num = apply_num
 
     @property
-    def proportion(self) -> int:
+    def proportion(self) -> float:
         """Gets the proportion of this Trend2ResData.
 
 
         :return: The proportion of this Trend2ResData.
-        :rtype: int
+        :rtype: float
         """
         return self._proportion
 
     @proportion.setter
-    def proportion(self, proportion: int):
+    def proportion(self, proportion: float):
         """Sets the proportion of this Trend2ResData.
 
 
         :param proportion: The proportion of this Trend2ResData.
-        :type proportion: int
+        :type proportion: float
         """
 
         self._proportion = proportion

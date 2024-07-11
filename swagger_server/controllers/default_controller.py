@@ -9,7 +9,7 @@ from swagger_server.models.applicant_req import ApplicantReq  # noqa: E501
 from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
 from swagger_server.models.area_res import AreaRes  # noqa: E501
-from swagger_server.models.mysql.db import create_connection, close_connection
+from swagger_server.models.mysql.db import create_connection, close_connection, DecimalEncoder
 from swagger_server.models.trend1_req import Trend1Req  # noqa: E501
 from swagger_server.models.trend1_res import Trend1Res  # noqa: E501
 from swagger_server.models.trend2_req import Trend2Req  # noqa: E501
@@ -205,8 +205,8 @@ FROM
     biz_patent
 WHERE
     YEAR(application_date) BETWEEN 2014 AND 2024
-  AND meta_class LIKE '%%'
-  AND application_area_code LIKE '%%'
+  AND meta_class LIKE %s
+  AND application_area_code LIKE %s
 GROUP BY
     application_area_code, YEAR(application_date)
 ORDER BY
@@ -226,7 +226,7 @@ ORDER BY
             'data': [{'year': row['year'], 'authorization_num': row['authorization_num'], 'apply_num': row['apply_num'],
                       'proportion': row['proportion']} for row in results]
         }
-        response_json = json.dumps(response, ensure_ascii=False)
+        response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
         return jsonify({'message': 'No data found'}), 404
