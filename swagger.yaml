@@ -164,6 +164,48 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/technology:
+    post:
+      summary: 技术构成分析
+      operationId: patent_technology
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TechnologyReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/TechnologyRes'
+        '400':
+          description: Invalid input
+  /patent/concentration:
+    post:
+      summary: 集中度分析
+      operationId: patent_concentration
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConcentrationReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/ConcentrationRes'
+        '400':
+          description: Invalid input
 definitions:
   Trend1Req:
     type: object
@@ -309,3 +351,39 @@ definitions:
         type: integer
     example:
       id: 0
+
+  TechnologyReq:
+    type: object
+    properties:
+      industry:
+        type: string
+      area:
+        type: string
+  TechnologyRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          class:
+            type: string
+          num:
+            type: integer
+  ConcentrationReq:
+    type: object
+    properties:
+      industry:
+        type: string
+      area:
+        type: string
+  ConcentrationRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          year:
+            type: string
+          proportion:
+            type: number
+            format: float

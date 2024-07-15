@@ -15,6 +15,12 @@ from swagger_server.models.patent_report_detail_res_data import PatentReportDeta
 from swagger_server.models.patent_report_req import PatentReportReq
 from swagger_server.models.patent_report_res import PatentReportRes
 from swagger_server.models.patent_report_res_data import PatentReportResData
+from swagger_server.models.concentration_req import ConcentrationReq
+from swagger_server.models.concentration_res import ConcentrationRes
+from swagger_server.models.concentration_res_data import ConcentrationResData
+from swagger_server.models.technology_req import TechnologyReq
+from swagger_server.models.technology_res import TechnologyRes
+from swagger_server.models.technology_res_data import TechnologyResData
 from swagger_server.models.trend1_req import Trend1Req
 from swagger_server.models.trend1_res import Trend1Res
 from swagger_server.models.trend1_res_data import Trend1ResData
