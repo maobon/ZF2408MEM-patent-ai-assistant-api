@@ -112,6 +112,58 @@ paths:
             $ref: '#/definitions/TypeRes'
         '400':
           description: Invalid input
+  /patent_report/save:
+    post:
+      summary: 报告保存
+      operationId: patent_report_save
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PatentReportReq'
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/PatentReportRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent_report_detail/save:
+    post:
+      summary: 报告详情保存
+      operationId: patent_report_detail_save
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PatentReportDetailReq'
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/PatentReportDetailRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
 definitions:
   Trend1Req:
     type: object
@@ -201,4 +253,59 @@ definitions:
             type: string
           num:
             type: integer
-
+  PatentReportReq:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: string
+      title:
+        type: string
+      batch_id:
+        type: string
+  PatentReportRes:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/PatentReportRes_data'
+    example:
+      data:
+        id: 0
+  PatentReportRes_data:
+    type: object
+    properties:
+      id:
+        type: integer
+    example:
+      id: 0
+  PatentReportDetailReq:
+    type: object
+    properties:
+      id:
+        type: integer
+      report_id:
+        type: integer
+      type:
+        type: string
+      sub_title:
+        type: string
+      content:
+        type: string
+      data:
+        type: string
+  PatentReportDetailRes:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/PatentReportDetailRes_data'
+    example:
+      data:
+        id: 0
+  PatentReportDetailRes_data:
+    type: object
+    properties:
+      id:
+        type: integer
+    example:
+      id: 0

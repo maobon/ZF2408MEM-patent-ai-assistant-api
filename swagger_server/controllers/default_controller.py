@@ -9,6 +9,10 @@ from swagger_server.models.applicant_req import ApplicantReq  # noqa: E501
 from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
 from swagger_server.models.area_res import AreaRes  # noqa: E501
+from swagger_server.models.patent_report_req import PatentReportReq  # noqa: E501
+from swagger_server.models.patent_report_res import PatentReportRes  # noqa: E501
+from swagger_server.models.patent_report_detail_req import PatentReportDetailReq  # noqa: E501
+from swagger_server.models.patent_report_detail_res import PatentReportDetailRes  # noqa: E501
 from swagger_server.models.mysql.db import create_connection, close_connection, DecimalEncoder
 from swagger_server.models.trend1_req import Trend1Req  # noqa: E501
 from swagger_server.models.trend1_res import Trend1Res  # noqa: E501
@@ -17,6 +21,7 @@ from swagger_server.models.trend2_res import Trend2Res  # noqa: E501
 from swagger_server.models.type_req import TypeReq  # noqa: E501
 from swagger_server.models.type_res import TypeRes  # noqa: E501
 from swagger_server import util
+from datetime import datetime
 
 
 def patent_applicant(body):  # noqa: E501
@@ -269,3 +274,125 @@ def patent_type(body):  # noqa: E501
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
     else:
         return jsonify({'message': 'No data found'}), 200
+
+def patent_report_save(body):  # noqa: E501
+    """报告保存
+
+     # noqa: E501
+
+    :param body:
+    :type body: dict | bytes
+
+    :rtype: PatentReportRes
+    """
+
+    if not request.is_json:
+        return jsonify({'message': 'Invalid input'}), 400
+
+    body = request.get_json()
+    patent_report_req = PatentReportReq.from_dict(body)
+
+    connection = create_connection()
+    if connection is None:
+        return jsonify({'message': 'Database connection failed'}), 500
+
+    cursor = connection.cursor(dictionary=True)
+
+    user_id = patent_report_req.user_id
+    title = patent_report_req.title
+    batch_id = patent_report_req.batch_id
+
+    # 数据准备
+    data = [
+        (user_id, title, datetime.now(), datetime.now(), 1, 0, batch_id)
+    ]
+
+    # SQL语句
+    sql_insert = """
+    INSERT INTO patent_ai_assistant.biz_patent_report 
+    (user_id, title, created_time, modified_time, status, is_deleted, batch_id) 
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    # 执行插入
+    cursor.executemany(sql_insert, data)
+
+    # 获取自增ID
+    inserted_id = cursor.lastrowid
+
+    # 提交事务
+    connection.commit()
+
+    # 关闭游标和连接
+    cursor.close()
+    close_connection(connection)
+
+    if inserted_id:
+        response = {
+            'data': {'id': inserted_id}
+        }
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+    else:
+        return jsonify({'message': 'insert fail'}), 500
+def patent_report_detail_save(body):  # noqa: E501
+    """报告详情保存
+
+     # noqa: E501
+
+    :param body:
+    :type body: dict | bytes
+
+    :rtype: None
+    """
+    if not request.is_json:
+        return jsonify({'message': 'Invalid input'}), 400
+
+    body = request.get_json()
+    patent_report_detail_req = PatentReportDetailReq.from_dict(body)
+
+    connection = create_connection()
+    if connection is None:
+        return jsonify({'message': 'Database connection failed'}), 500
+
+    cursor = connection.cursor(dictionary=True)
+
+    report_id = patent_report_detail_req.report_id
+    type = patent_report_detail_req.type
+    sub_title = patent_report_detail_req.sub_title
+    content = patent_report_detail_req.content
+    json_data = patent_report_detail_req.data
+
+    # 数据准备
+    datas = [
+        (report_id, type,sub_title,content,json_data, datetime.now(), datetime.now(), 1, 0)
+    ]
+
+    # SQL语句
+    sql_insert = """
+    INSERT INTO patent_ai_assistant.biz_patent_report_detail 
+    (report_id, type,sub_title,content,data, created_time, modified_time, status, is_deleted) 
+    VALUES (%s, %s,%s, %s, %s, %s, %s, %s, %s)
+    """
+
+    # 执行插入
+    cursor.executemany(sql_insert, datas)
+
+    # 获取自增ID
+    inserted_id = cursor.lastrowid
+
+    # 提交事务
+    connection.commit()
+
+    # 关闭游标和连接
+    cursor.close()
+    close_connection(connection)
+
+    if inserted_id:
+        response = {
+            'data': {'id': inserted_id}
+        }
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+    else:
+        return jsonify({'message': 'insert fail'}), 500

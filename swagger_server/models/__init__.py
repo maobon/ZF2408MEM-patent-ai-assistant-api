@@ -9,6 +9,12 @@ from swagger_server.models.applicant_res_data import ApplicantResData
 from swagger_server.models.area_req import AreaReq
 from swagger_server.models.area_res import AreaRes
 from swagger_server.models.area_res_data import AreaResData
+from swagger_server.models.patent_report_detail_req import PatentReportDetailReq
+from swagger_server.models.patent_report_detail_res import PatentReportDetailRes
+from swagger_server.models.patent_report_detail_res_data import PatentReportDetailResData
+from swagger_server.models.patent_report_req import PatentReportReq
+from swagger_server.models.patent_report_res import PatentReportRes
+from swagger_server.models.patent_report_res_data import PatentReportResData
 from swagger_server.models.trend1_req import Trend1Req
 from swagger_server.models.trend1_res import Trend1Res
 from swagger_server.models.trend1_res_data import Trend1ResData
