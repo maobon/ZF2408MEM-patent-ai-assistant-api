@@ -9,6 +9,12 @@ from swagger_server.models.applicant_res_data import ApplicantResData
 from swagger_server.models.area_req import AreaReq
 from swagger_server.models.area_res import AreaRes
 from swagger_server.models.area_res_data import AreaResData
+from swagger_server.models.concentration_req import ConcentrationReq
+from swagger_server.models.concentration_res import ConcentrationRes
+from swagger_server.models.concentration_res_data import ConcentrationResData
+from swagger_server.models.technology_req import TechnologyReq
+from swagger_server.models.technology_res import TechnologyRes
+from swagger_server.models.technology_res_data import TechnologyResData
 from swagger_server.models.trend1_req import Trend1Req
 from swagger_server.models.trend1_res import Trend1Res
 from swagger_server.models.trend1_res_data import Trend1ResData

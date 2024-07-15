@@ -3,7 +3,7 @@ info:
   title: API Demo
   version: "1.0"
 servers:
-- url: http://110.42.103.198:22440/v1
+- url: /v1
 paths:
   /patent/trend1:
     post:
@@ -115,6 +115,50 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/technology:
+    post:
+      summary: 技术构成分析
+      operationId: patent_technology
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechnologyReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnologyRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /patent/concentration:
+    post:
+      summary: 集中度分析
+      operationId: patent_concentration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConcentrationReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConcentrationRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
 components:
   schemas:
     Trend1Req:
@@ -196,6 +240,38 @@ components:
         data:
           num: 0
           type: type
+    TechnologyReq:
+      type: object
+      properties:
+        industry:
+          type: string
+        area:
+          type: string
+    TechnologyRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TechnologyRes_data'
+      example:
+        data:
+          num: 0
+          class: class
+    ConcentrationReq:
+      type: object
+      properties:
+        industry:
+          type: string
+        area:
+          type: string
+    ConcentrationRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ConcentrationRes_data'
+      example:
+        data:
+          proportion: 0.8008282
+          year: year
     Trend1Res_data:
       type: object
       properties:
@@ -256,5 +332,26 @@ components:
       example:
         num: 0
         type: type
+    TechnologyRes_data:
+      type: object
+      properties:
+        class:
+          type: string
+        num:
+          type: integer
+      example:
+        num: 0
+        class: class
+    ConcentrationRes_data:
+      type: object
+      properties:
+        year:
+          type: string
+        proportion:
+          type: number
+          format: float
+      example:
+        proportion: 0.8008282
+        year: year
 x-original-swagger-version: "2.0"
 
