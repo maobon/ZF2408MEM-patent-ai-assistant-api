@@ -51,11 +51,13 @@ def patent_applicant(body):  # noqa: E501
     cursor = connection.cursor(dictionary=True)
     query = """
     SELECT applicant_name AS applicant, COUNT(*) AS num
-    FROM biz_patent
+    FROM biz_patent_0713
     WHERE meta_class like %s
     AND application_area_code like %s
+    AND summary like %s
+    AND title like %s
     GROUP BY applicant_name
-    ORDER BY num DESC limit 10;
+    ORDER BY num DESC limit 5;
     """
     like_pattern1 = f"%{applicant_req.industry}%"
     if applicant_req.industry is None:
@@ -63,7 +65,13 @@ def patent_applicant(body):  # noqa: E501
     like_pattern2 = f"%{applicant_req.area}%"
     if applicant_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{applicant_req.key}%"
+    if applicant_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{applicant_req.theme}%"
+    if applicant_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3,like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -103,10 +111,12 @@ def patent_area(body):  # noqa: E501
     YEAR(application_date) AS year,
     COUNT(*) AS num
 FROM
-    biz_patent
+    biz_patent_0713
 WHERE
     YEAR(application_date) BETWEEN 2014 AND 2024
   AND meta_class LIKE %s
+  AND summary like %s
+    AND title like %s
 GROUP BY
     application_area_code, YEAR(application_date)
 ORDER BY
@@ -115,7 +125,13 @@ ORDER BY
     like_pattern1 = f"%{area_req.industry}%"
     if area_req.industry is None:
         like_pattern1 = f"%%"
-    cursor.execute(query, (like_pattern1,))
+    like_pattern3 = f"%{area_req.key}%"
+    if area_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{area_req.theme}%"
+    if area_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1,like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -151,12 +167,15 @@ def patent_trend1(body):  # noqa: E501
     cursor = connection.cursor(dictionary=True)
     query = """
     SELECT YEAR(application_date) AS year, COUNT(*) AS num
-    FROM biz_patent
+    FROM biz_patent_0713
     WHERE YEAR(application_date) BETWEEN 2014 AND 2024
         AND meta_class like %s
         AND application_area_code like %s
+        AND summary like %s
+        AND title like %s
     GROUP BY YEAR(application_date)
-    ORDER BY year;
+    ORDER BY year
+    LIMIT 5;
     """
     like_pattern1 = f"%{trend1_req.industry}%"
     if trend1_req.industry is None:
@@ -164,7 +183,13 @@ def patent_trend1(body):  # noqa: E501
     like_pattern2 = f"%{trend1_req.area}%"
     if trend1_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{trend1_req.key}%"
+    if trend1_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{trend1_req.theme}%"
+    if trend1_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -200,27 +225,32 @@ def patent_trend2(body):  # noqa: E501
     cursor = connection.cursor(dictionary=True)
     query = """
     SELECT
-    application_area_code,
-    YEAR(application_date) AS year,
-    SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) AS authorization_num,
-    SUM(CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END) AS apply_num,
+    year,
+    SUM(authorization_num) AS authorization_num,
+    SUM(apply_num) AS apply_num,
     CASE
-        WHEN SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) = 0
-            THEN 0
-        ELSE
-            SUM(CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END) /
-            SUM(CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END)
-        END AS proportion
-FROM
-    biz_patent
-WHERE
-    YEAR(application_date) BETWEEN 2014 AND 2024
-  AND meta_class LIKE %s
-  AND application_area_code LIKE %s
+        WHEN SUM(apply_num) = 0 THEN 0
+        ELSE SUM(authorization_num) / NULLIF(SUM(apply_num), 0)
+    END AS proportion
+FROM (
+    SELECT
+        YEAR(application_date) AS year,
+        CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END AS authorization_num,
+        CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END AS apply_num
+    FROM
+        biz_patent_0713
+    WHERE
+        YEAR(application_date) BETWEEN 2014 AND 2024
+      AND meta_class LIKE %s
+      AND application_area_code LIKE %s
+      AND summary LIKE %s
+      AND title LIKE %s
+) AS yearly_data
 GROUP BY
-    application_area_code, YEAR(application_date)
+    year
 ORDER BY
-    application_area_code, year;
+    year
+LIMIT 5;
     """
     like_pattern1 = f"%{trend2_req.industry}%"
     if trend2_req.industry is None:
@@ -228,7 +258,13 @@ ORDER BY
     like_pattern2 = f"%{trend2_req.area}%"
     if trend2_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{trend2_req.key}%"
+    if trend2_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{trend2_req.theme}%"
+    if trend2_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
     if results:
@@ -263,11 +299,18 @@ def patent_type(body):  # noqa: E501
         return jsonify({'message': 'Database connection failed'}), 500
 
     cursor = connection.cursor(dictionary=True)
-    query = "SELECT patent_type, COUNT(*) as num FROM biz_patent WHERE meta_class like %s GROUP BY patent_type"
+    query = """SELECT patent_type, COUNT(*) as num FROM biz_patent_0713 WHERE meta_class like %s and summary like %s and
+             title like %s GROUP BY patent_type LIMIT 5;"""
     like_pattern = f"%{type_req.industry}%"
     if type_req.industry is None:
         like_pattern = f"%%"
-    cursor.execute(query, (like_pattern,))
+    like_pattern2 = f"%{type_req.key}%"
+    if type_req.key is None:
+        like_pattern2 = f"%%"
+    like_pattern3 = f"%{type_req.theme}%"
+    if type_req.theme is None:
+        like_pattern3 = f"%%"
+    cursor.execute(query, (like_pattern, like_pattern2, like_pattern3))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -438,6 +481,8 @@ def patent_concentration(body):  # noqa: E501
         application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
     AND meta_class like %s
     AND application_area_code like %s
+    AND summary like %s
+    AND title like %s
     GROUP BY
         applicant_name, YEAR(application_date), application_area_code, patent_type
 ),
@@ -505,7 +550,8 @@ FROM
 GROUP BY
     t1.year
 ORDER BY
-    t1.year;
+    t1.year
+LIMIT 5;
     """
     like_pattern1 = f"%{concentration_req.industry}%"
     if concentration_req.industry is None:
@@ -513,7 +559,13 @@ ORDER BY
     like_pattern2 = f"%{concentration_req.area}%"
     if concentration_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{concentration_req.key}%"
+    if concentration_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{concentration_req.theme}%"
+    if concentration_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2,like_pattern3,like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -562,12 +614,14 @@ FROM (
              application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
            AND meta_class LIKE %s
            AND application_area_code LIKE %s
+           AND summary like %s
+           AND title like %s
          GROUP BY
              meta_class
      ) AS RecentYears
 ORDER BY
     total_applications DESC
-LIMIT 10;
+LIMIT 5;
     """
     like_pattern1 = f"%{technology_req.industry}%"
     if technology_req.industry is None:
@@ -575,7 +629,13 @@ LIMIT 10;
     like_pattern2 = f"%{technology_req.area}%"
     if technology_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{technology_req.key}%"
+    if technology_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{technology_req.theme}%"
+    if technology_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
