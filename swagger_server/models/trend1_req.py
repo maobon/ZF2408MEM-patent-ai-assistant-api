@@ -14,25 +14,30 @@ class Trend1Req(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, industry: str=None, area: str=None):  # noqa: E501
+    def __init__(self, industry: str=None, area: str=None, applicant: str=None):  # noqa: E501
         """Trend1Req - a model defined in Swagger
 
         :param industry: The industry of this Trend1Req.  # noqa: E501
         :type industry: str
         :param area: The area of this Trend1Req.  # noqa: E501
         :type area: str
+        :param applicant: The applicant of this Trend1Req.  # noqa: E501
+        :type applicant: str
         """
         self.swagger_types = {
             'industry': str,
-            'area': str
+            'area': str,
+            'applicant': str
         }
 
         self.attribute_map = {
             'industry': 'industry',
-            'area': 'area'
+            'area': 'area',
+            'applicant': 'applicant'
         }
         self._industry = industry
         self._area = area
+        self._applicant = applicant
 
     @classmethod
     def from_dict(cls, dikt) -> 'Trend1Req':
@@ -86,3 +91,24 @@ class Trend1Req(Model):
         """
 
         self._area = area
+
+    @property
+    def applicant(self) -> str:
+        """Gets the applicant of this Trend1Req.
+
+
+        :return: The applicant of this Trend1Req.
+        :rtype: str
+        """
+        return self._applicant
+
+    @applicant.setter
+    def applicant(self, applicant: str):
+        """Sets the applicant of this Trend1Req.
+
+
+        :param applicant: The applicant of this Trend1Req.
+        :type applicant: str
+        """
+
+        self._applicant = applicant

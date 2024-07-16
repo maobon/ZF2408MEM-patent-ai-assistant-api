@@ -14,20 +14,35 @@ class AreaReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, industry: str=None):  # noqa: E501
+    def __init__(self, industry: str=None, applicant: str=None, key: str=None, theme: str=None):  # noqa: E501
         """AreaReq - a model defined in Swagger
 
         :param industry: The industry of this AreaReq.  # noqa: E501
         :type industry: str
+        :param applicant: The applicant of this AreaReq.  # noqa: E501
+        :type applicant: str
+        :param key: The key of this AreaReq.  # noqa: E501
+        :type key: str
+        :param theme: The theme of this AreaReq.  # noqa: E501
+        :type theme: str
         """
         self.swagger_types = {
-            'industry': str
+            'industry': str,
+            'applicant': str,
+            'key': str,
+            'theme': str
         }
 
         self.attribute_map = {
-            'industry': 'industry'
+            'industry': 'industry',
+            'applicant': 'applicant',
+            'key': 'key',
+            'theme': 'theme'
         }
         self._industry = industry
+        self._applicant = applicant
+        self._key = key
+        self._theme = theme
 
     @classmethod
     def from_dict(cls, dikt) -> 'AreaReq':
@@ -60,3 +75,66 @@ class AreaReq(Model):
         """
 
         self._industry = industry
+
+    @property
+    def applicant(self) -> str:
+        """Gets the applicant of this AreaReq.
+
+
+        :return: The applicant of this AreaReq.
+        :rtype: str
+        """
+        return self._applicant
+
+    @applicant.setter
+    def applicant(self, applicant: str):
+        """Sets the applicant of this AreaReq.
+
+
+        :param applicant: The applicant of this AreaReq.
+        :type applicant: str
+        """
+
+        self._applicant = applicant
+
+    @property
+    def key(self) -> str:
+        """Gets the key of this AreaReq.
+
+
+        :return: The key of this AreaReq.
+        :rtype: str
+        """
+        return self._key
+
+    @key.setter
+    def key(self, key: str):
+        """Sets the key of this AreaReq.
+
+
+        :param key: The key of this AreaReq.
+        :type key: str
+        """
+
+        self._key = key
+
+    @property
+    def theme(self) -> str:
+        """Gets the theme of this AreaReq.
+
+
+        :return: The theme of this AreaReq.
+        :rtype: str
+        """
+        return self._theme
+
+    @theme.setter
+    def theme(self, theme: str):
+        """Sets the theme of this AreaReq.
+
+
+        :param theme: The theme of this AreaReq.
+        :type theme: str
+        """
+
+        self._theme = theme

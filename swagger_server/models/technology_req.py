@@ -14,25 +14,35 @@ class TechnologyReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, industry: str=None, area: str=None):  # noqa: E501
+    def __init__(self, industry: str=None, area: str=None, key: str=None, theme: str=None):  # noqa: E501
         """TechnologyReq - a model defined in Swagger
 
         :param industry: The industry of this TechnologyReq.  # noqa: E501
         :type industry: str
         :param area: The area of this TechnologyReq.  # noqa: E501
         :type area: str
+        :param key: The key of this TechnologyReq.  # noqa: E501
+        :type key: str
+        :param theme: The theme of this TechnologyReq.  # noqa: E501
+        :type theme: str
         """
         self.swagger_types = {
             'industry': str,
-            'area': str
+            'area': str,
+            'key': str,
+            'theme': str
         }
 
         self.attribute_map = {
             'industry': 'industry',
-            'area': 'area'
+            'area': 'area',
+            'key': 'key',
+            'theme': 'theme'
         }
         self._industry = industry
         self._area = area
+        self._key = key
+        self._theme = theme
 
     @classmethod
     def from_dict(cls, dikt) -> 'TechnologyReq':
@@ -86,3 +96,45 @@ class TechnologyReq(Model):
         """
 
         self._area = area
+
+    @property
+    def key(self) -> str:
+        """Gets the key of this TechnologyReq.
+
+
+        :return: The key of this TechnologyReq.
+        :rtype: str
+        """
+        return self._key
+
+    @key.setter
+    def key(self, key: str):
+        """Sets the key of this TechnologyReq.
+
+
+        :param key: The key of this TechnologyReq.
+        :type key: str
+        """
+
+        self._key = key
+
+    @property
+    def theme(self) -> str:
+        """Gets the theme of this TechnologyReq.
+
+
+        :return: The theme of this TechnologyReq.
+        :rtype: str
+        """
+        return self._theme
+
+    @theme.setter
+    def theme(self, theme: str):
+        """Sets the theme of this TechnologyReq.
+
+
+        :param theme: The theme of this TechnologyReq.
+        :type theme: str
+        """
+
+        self._theme = theme

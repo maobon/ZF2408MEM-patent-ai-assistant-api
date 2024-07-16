@@ -162,6 +162,12 @@ definitions:
         type: string
       area:
         type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
+        type: string
   Trend1Res:
     type: object
     properties:
@@ -178,6 +184,12 @@ definitions:
       industry:
         type: string
       area:
+        type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
         type: string
   Trend2Res:
     type: object
@@ -201,6 +213,12 @@ definitions:
         type: string
       area:
         type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
+        type: string
   ApplicantRes:
     type: object
     properties:
@@ -215,6 +233,12 @@ definitions:
     type: object
     properties:
       industry:
+        type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
         type: string
   AreaRes:
     type: object
@@ -233,6 +257,12 @@ definitions:
     properties:
       industry:
         type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
+        type: string
   TypeRes:
     type: object
     properties:
@@ -250,6 +280,10 @@ definitions:
         type: string
       area:
         type: string
+      key:
+        type: string
+      theme:
+        type: string
   TechnologyRes:
     type: object
     properties:
@@ -266,6 +300,12 @@ definitions:
       industry:
         type: string
       area:
+        type: string
+      applicant:
+        type: string
+      key:
+        type: string
+      theme:
         type: string
   ConcentrationRes:
     type: object

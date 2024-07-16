@@ -213,6 +213,8 @@ WHERE
     YEAR(application_date) BETWEEN 2014 AND 2024
   AND meta_class LIKE %s
   AND application_area_code LIKE %s
+  AND summary like %s
+  AND title like %s
 GROUP BY
     application_area_code, YEAR(application_date)
 ORDER BY
@@ -225,6 +227,12 @@ LIMIT 5;
     like_pattern2 = f"%{trend2_req.area}%"
     if trend2_req.area is None:
         like_pattern2 = f"%%"
+    like_pattern3 = f"%{trend2_req.key}%"
+    if trend2_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{concentration_req.theme}%"
+    if concentration_req.theme is None:
+        like_pattern4 = f"%%"
     cursor.execute(query, (like_pattern1, like_pattern2))
     results = cursor.fetchall()
     close_connection(connection)
@@ -260,11 +268,18 @@ def patent_type(body):  # noqa: E501
         return jsonify({'message': 'Database connection failed'}), 500
 
     cursor = connection.cursor(dictionary=True)
-    query = "SELECT patent_type, COUNT(*) as num FROM biz_patent WHERE meta_class like %s GROUP BY patent_type LIMIT 5"
+    query = ("SELECT patent_type, COUNT(*) as num FROM biz_patent WHERE meta_class like %s and summary like %s and "
+             "title like %s GROUP BY patent_type LIMIT 5")
     like_pattern = f"%{type_req.industry}%"
     if type_req.industry is None:
         like_pattern = f"%%"
-    cursor.execute(query, (like_pattern,))
+    like_pattern2 = f"%{type_req.key}%"
+    if type_req.key is None:
+        like_pattern2 = f"%%"
+    like_pattern3 = f"%{type_req.theme}%"
+    if type_req.theme is None:
+        like_pattern3 = f"%%"
+    cursor.execute(query, (like_pattern, like_pattern2, like_pattern3))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -313,6 +328,8 @@ def patent_concentration(body):  # noqa: E501
         application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
     AND meta_class like %s
     AND application_area_code like %s
+    AND summary like %s
+    AND title like %s
     GROUP BY
         applicant_name, YEAR(application_date), application_area_code, patent_type
 ),
@@ -389,7 +406,13 @@ LIMIT 5;
     like_pattern2 = f"%{concentration_req.area}%"
     if concentration_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{concentration_req.key}%"
+    if concentration_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{concentration_req.theme}%"
+    if concentration_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2,like_pattern3,like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -438,6 +461,8 @@ FROM (
              application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
            AND meta_class LIKE %s
            AND application_area_code LIKE %s
+           AND summary like %s
+           AND title like %s
          GROUP BY
              meta_class
      ) AS RecentYears
@@ -451,7 +476,13 @@ LIMIT 5;
     like_pattern2 = f"%{technology_req.area}%"
     if technology_req.area is None:
         like_pattern2 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2))
+    like_pattern3 = f"%{technology_req.key}%"
+    if technology_req.key is None:
+        like_pattern3 = f"%%"
+    like_pattern4 = f"%{technology_req.theme}%"
+    if technology_req.theme is None:
+        like_pattern4 = f"%%"
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 

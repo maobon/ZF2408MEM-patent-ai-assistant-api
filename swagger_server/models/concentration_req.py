@@ -14,25 +14,40 @@ class ConcentrationReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, industry: str=None, area: str=None):  # noqa: E501
+    def __init__(self, industry: str=None, area: str=None, applicant: str=None, key: str=None, theme: str=None):  # noqa: E501
         """ConcentrationReq - a model defined in Swagger
 
         :param industry: The industry of this ConcentrationReq.  # noqa: E501
         :type industry: str
         :param area: The area of this ConcentrationReq.  # noqa: E501
         :type area: str
+        :param applicant: The applicant of this ConcentrationReq.  # noqa: E501
+        :type applicant: str
+        :param key: The key of this ConcentrationReq.  # noqa: E501
+        :type key: str
+        :param theme: The theme of this ConcentrationReq.  # noqa: E501
+        :type theme: str
         """
         self.swagger_types = {
             'industry': str,
-            'area': str
+            'area': str,
+            'applicant': str,
+            'key': str,
+            'theme': str
         }
 
         self.attribute_map = {
             'industry': 'industry',
-            'area': 'area'
+            'area': 'area',
+            'applicant': 'applicant',
+            'key': 'key',
+            'theme': 'theme'
         }
         self._industry = industry
         self._area = area
+        self._applicant = applicant
+        self._key = key
+        self._theme = theme
 
     @classmethod
     def from_dict(cls, dikt) -> 'ConcentrationReq':
@@ -86,3 +101,66 @@ class ConcentrationReq(Model):
         """
 
         self._area = area
+
+    @property
+    def applicant(self) -> str:
+        """Gets the applicant of this ConcentrationReq.
+
+
+        :return: The applicant of this ConcentrationReq.
+        :rtype: str
+        """
+        return self._applicant
+
+    @applicant.setter
+    def applicant(self, applicant: str):
+        """Sets the applicant of this ConcentrationReq.
+
+
+        :param applicant: The applicant of this ConcentrationReq.
+        :type applicant: str
+        """
+
+        self._applicant = applicant
+
+    @property
+    def key(self) -> str:
+        """Gets the key of this ConcentrationReq.
+
+
+        :return: The key of this ConcentrationReq.
+        :rtype: str
+        """
+        return self._key
+
+    @key.setter
+    def key(self, key: str):
+        """Sets the key of this ConcentrationReq.
+
+
+        :param key: The key of this ConcentrationReq.
+        :type key: str
+        """
+
+        self._key = key
+
+    @property
+    def theme(self) -> str:
+        """Gets the theme of this ConcentrationReq.
+
+
+        :return: The theme of this ConcentrationReq.
+        :rtype: str
+        """
+        return self._theme
+
+    @theme.setter
+    def theme(self, theme: str):
+        """Sets the theme of this ConcentrationReq.
+
+
+        :param theme: The theme of this ConcentrationReq.
+        :type theme: str
+        """
+
+        self._theme = theme
