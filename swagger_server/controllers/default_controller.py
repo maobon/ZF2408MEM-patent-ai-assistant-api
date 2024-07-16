@@ -49,7 +49,7 @@ def patent_applicant(body):  # noqa: E501
     WHERE meta_class like %s
     AND application_area_code like %s
     GROUP BY applicant_name
-    ORDER BY num DESC limit 10;
+    ORDER BY num DESC limit 5;
     """
     like_pattern1 = f"%{applicant_req.industry}%"
     if applicant_req.industry is None:
@@ -104,7 +104,8 @@ WHERE
 GROUP BY
     application_area_code, YEAR(application_date)
 ORDER BY
-    application_area_code, year;
+    application_area_code, year
+LIMIT 5;
     """
     like_pattern1 = f"%{area_req.industry}%"
     if area_req.industry is None:
@@ -150,7 +151,8 @@ def patent_trend1(body):  # noqa: E501
         AND meta_class like %s
         AND application_area_code like %s
     GROUP BY YEAR(application_date)
-    ORDER BY year;
+    ORDER BY year
+    LIMIT 5;
     """
     like_pattern1 = f"%{trend1_req.industry}%"
     if trend1_req.industry is None:
@@ -214,7 +216,8 @@ WHERE
 GROUP BY
     application_area_code, YEAR(application_date)
 ORDER BY
-    application_area_code, year;
+    application_area_code, year
+LIMIT 5;
     """
     like_pattern1 = f"%{trend2_req.industry}%"
     if trend2_req.industry is None:
@@ -257,7 +260,7 @@ def patent_type(body):  # noqa: E501
         return jsonify({'message': 'Database connection failed'}), 500
 
     cursor = connection.cursor(dictionary=True)
-    query = "SELECT patent_type, COUNT(*) as num FROM biz_patent WHERE meta_class like %s GROUP BY patent_type"
+    query = "SELECT patent_type, COUNT(*) as num FROM biz_patent WHERE meta_class like %s GROUP BY patent_type LIMIT 5"
     like_pattern = f"%{type_req.industry}%"
     if type_req.industry is None:
         like_pattern = f"%%"
@@ -377,7 +380,8 @@ FROM
 GROUP BY
     t1.year
 ORDER BY
-    t1.year;
+    t1.year
+LIMIT 5;
     """
     like_pattern1 = f"%{concentration_req.industry}%"
     if concentration_req.industry is None:
@@ -439,7 +443,7 @@ FROM (
      ) AS RecentYears
 ORDER BY
     total_applications DESC
-LIMIT 10;
+LIMIT 5;
     """
     like_pattern1 = f"%{technology_req.industry}%"
     if technology_req.industry is None:
