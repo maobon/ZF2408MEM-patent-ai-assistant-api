@@ -170,6 +170,10 @@ components:
           type: string
         applicant:
           type: string
+        key:
+          type: string
+        theme:
+          type: string
     Trend1Res:
       type: object
       properties:
@@ -187,6 +191,10 @@ components:
         area:
           type: string
         applicant:
+          type: string
+        key:
+          type: string
+        theme:
           type: string
     Trend2Res:
       type: object
