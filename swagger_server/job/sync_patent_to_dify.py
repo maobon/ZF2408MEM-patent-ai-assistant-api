@@ -11,6 +11,7 @@ from datetime import datetime
 # 配置日志记录
 logging.basicConfig(level=logging.INFO)
 
+
 class SyncPatentToDify:
     """
         db:
@@ -25,7 +26,6 @@ class SyncPatentToDify:
 
     def __init__(self, app=None):
 
-
         # 数据库 URL
         self.DATABASE_URL = "mysql+mysqlconnector://root:Tiger!123456@47.94.110.191:9005/ks_sd_scholar"
 
@@ -37,7 +37,6 @@ class SyncPatentToDify:
             'Authorization': 'Bearer dataset-XvEmX2yTpra9QnzoF9UwfrtE',
             'Content-Type': 'application/json'
         }
-
 
         self.scheduler = BackgroundScheduler()
         self.scheduler.start()
@@ -66,7 +65,6 @@ class SyncPatentToDify:
             Column('summary', String(2048)),
             Column('update_time', DateTime)
         )
-
 
         # 调度任务，每1分钟运行一次
         self.scheduler.add_job(

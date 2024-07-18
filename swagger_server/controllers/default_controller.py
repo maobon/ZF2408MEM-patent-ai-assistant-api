@@ -4,7 +4,7 @@ import connexion
 import six
 from flask import jsonify, request, make_response
 
-from swagger_server.models import type_req
+from swagger_server.models import type_req, DetailReq, ListReq
 from swagger_server.models.applicant_req import ApplicantReq  # noqa: E501
 from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
@@ -16,7 +16,7 @@ from swagger_server.models.patent_report_detail_res import PatentReportDetailRes
 from swagger_server.models.mysql.db import create_connection, close_connection, DecimalEncoder
 from swagger_server.models.concentration_req import ConcentrationReq  # noqa: E501
 from swagger_server.models.concentration_res import ConcentrationRes  # noqa: E501
-from swagger_server.models.mysql.db import close_connection, create_connection, DecimalEncoder
+from swagger_server.models.mysql.db import close_connection, create_connection, DecimalEncoder, create_connection1
 from swagger_server.models.technology_req import TechnologyReq  # noqa: E501
 from swagger_server.models.technology_res import TechnologyRes  # noqa: E501
 from swagger_server.models.trend1_req import Trend1Req  # noqa: E501
@@ -71,7 +71,7 @@ def patent_applicant(body):  # noqa: E501
     like_pattern4 = f"%{applicant_req.theme}%"
     if applicant_req.theme is None:
         like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3,like_pattern4))
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -131,7 +131,7 @@ ORDER BY
     like_pattern4 = f"%{area_req.theme}%"
     if area_req.theme is None:
         like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1,like_pattern3, like_pattern4))
+    cursor.execute(query, (like_pattern1, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -340,7 +340,7 @@ def patent_report_save(body):  # noqa: E501
     body = request.get_json()
     patent_report_req = PatentReportReq.from_dict(body)
 
-    connection = create_connection()
+    connection = create_connection1()
     if connection is None:
         return jsonify({'message': 'Database connection failed'}), 500
 
@@ -399,7 +399,7 @@ def patent_report_detail_save(body):  # noqa: E501
     body = request.get_json()
     patent_report_detail_req = PatentReportDetailReq.from_dict(body)
 
-    connection = create_connection()
+    connection = create_connection1()
     if connection is None:
         return jsonify({'message': 'Database connection failed'}), 500
 
@@ -565,7 +565,7 @@ LIMIT 5;
     like_pattern4 = f"%{concentration_req.theme}%"
     if concentration_req.theme is None:
         like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2,like_pattern3,like_pattern4))
+    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
     results = cursor.fetchall()
     close_connection(connection)
 
@@ -642,6 +642,86 @@ LIMIT 5;
     if results:
         response = {
             'data': [{'class': row['class'], 'num': row['num']} for row in results]
+        }
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+    else:
+        return jsonify({'message': 'No data found'}), 200
+
+
+def report_detail(body):  # noqa: E501
+    """报告详情
+
+     # noqa: E501
+
+    :param body:
+    :type body: dict | bytes
+
+    :rtype: DetailRes
+    """
+    if not request.is_json:
+        return jsonify({'message': 'Invalid input'}), 400
+
+    body = request.get_json()
+    detail_req = DetailReq.from_dict(body)
+    if not detail_req.id:
+        return jsonify({'message': 'user id is none'}), 400
+
+    connection = create_connection1()
+    if connection is None:
+        return jsonify({'message': 'Database connection failed'}), 500
+
+    cursor = connection.cursor(dictionary=True)
+    query = """select * from patent_ai_assistant.biz_patent_report_detail where report_id = %s;"""
+
+    cursor.execute(query, (detail_req.id,))
+    results = cursor.fetchall()
+    close_connection(connection)
+
+    if results:
+        response = {
+            'data': [{'type': row['type'], 'sub_title': row['sub_title'], 'content': row['content'], "is_deleted": row['is_deleted'],
+                      'status': row['status'], 'data': row['data']} for row in results]
+        }
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+    else:
+        return jsonify({'message': 'No data found'}), 200
+
+
+def report_list(body):  # noqa: E501
+    """报告列表
+
+     # noqa: E501
+
+    :param body:
+    :type body: dict | bytes
+
+    :rtype: ListRes
+    """
+    if not request.is_json:
+        return jsonify({'message': 'Invalid input'}), 400
+
+    body = request.get_json()
+    list_req = ListReq.from_dict(body)
+    if not list_req.user_id:
+        return jsonify({'message': 'user id is none'}), 400
+
+    connection = create_connection1()
+    if connection is None:
+        return jsonify({'message': 'Database connection failed'}), 500
+
+    cursor = connection.cursor(dictionary=True)
+    query = """select * from biz_patent_report where user_id = %s;"""
+
+    cursor.execute(query, (list_req.user_id,))
+    results = cursor.fetchall()
+    close_connection(connection)
+
+    if results:
+        response = {
+            'data': [{'id': row['id'], 'title': row['title'], 'status': row['status'], "is_deleted": row['is_deleted'],
+                      'batch_id': row['batch_id']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
         return make_response(response_json, 200, {'Content-Type': 'application/json'})
