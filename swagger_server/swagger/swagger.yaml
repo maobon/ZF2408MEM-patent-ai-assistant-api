@@ -311,8 +311,6 @@ components:
     PatentReportReq:
       type: object
       properties:
-        id:
-          type: integer
         user_id:
           type: string
         title:
@@ -337,8 +335,6 @@ components:
     PatentReportDetailReq:
       type: object
       properties:
-        id:
-          type: integer
         report_id:
           type: integer
         type:

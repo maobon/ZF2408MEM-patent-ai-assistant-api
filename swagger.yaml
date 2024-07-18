@@ -328,8 +328,6 @@ definitions:
   PatentReportReq:
     type: object
     properties:
-      id:
-        type: integer
       user_id:
         type: string
       title:
@@ -354,8 +352,6 @@ definitions:
   PatentReportDetailReq:
     type: object
     properties:
-      id:
-        type: integer
       report_id:
         type: integer
       type:
