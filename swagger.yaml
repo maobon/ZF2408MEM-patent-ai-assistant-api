@@ -93,7 +93,7 @@ paths:
           description: Invalid input
   /patent/type:
     post:
-      summary: 地域分析
+      summary: 类型分析
       operationId: patent_type
       produces:
         - application/json
@@ -204,6 +204,48 @@ paths:
           description: success
           schema:
             $ref: '#/definitions/ConcentrationRes'
+        '400':
+          description: Invalid input
+  /report/list:
+    post:
+      summary: 报告列表
+      operationId: report_list
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ListReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/ListRes'
+        '400':
+          description: Invalid input
+  /report/detail:
+    post:
+      summary: 报告详情
+      operationId: report_detail
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DetailReq'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/DetailRes'
         '400':
           description: Invalid input
 definitions:
@@ -427,3 +469,47 @@ definitions:
           proportion:
             type: number
             format: float
+  ListReq:
+    type: object
+    properties:
+      user_id:
+        type: string
+  ListRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          id:
+            type: integer
+          title:
+            type: string
+          status:
+            type: integer
+          is_deleted:
+            type: integer
+          batch_id:
+            type: integer
+  DetailReq:
+    type: object
+    properties:
+      id:
+        type: integer
+  DetailRes:
+    type: object
+    properties:
+      data:
+        type: array
+        properties:
+          type:
+            type: string
+          sub_title:
+            type: string
+          content:
+            type: string
+          data:
+            type: string
+          status:
+            type: integer
+          is_deleted:
+            type: integer

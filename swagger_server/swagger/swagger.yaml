@@ -95,7 +95,7 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/type:
     post:
-      summary: 地域分析
+      summary: 类型分析
       operationId: patent_type
       requestBody:
         content:
@@ -192,6 +192,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConcentrationRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /report/list:
+    post:
+      summary: 报告列表
+      operationId: report_list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRes'
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /report/detail:
+    post:
+      summary: 报告详情
+      operationId: report_detail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetailReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailRes'
         "400":
           description: Invalid input
           content: {}
@@ -406,6 +450,41 @@ components:
         data:
           proportion: 0.8008282
           year: year
+    ListReq:
+      type: object
+      properties:
+        user_id:
+          type: string
+    ListRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ListRes_data'
+      example:
+        data:
+          is_deleted: 1
+          batch_id: 5
+          id: 0
+          title: title
+          status: 6
+    DetailReq:
+      type: object
+      properties:
+        id:
+          type: integer
+    DetailRes:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DetailRes_data'
+      example:
+        data:
+          sub_title: sub_title
+          is_deleted: 6
+          data: data
+          type: type
+          content: content
+          status: 0
     Trend1Res_data:
       type: object
       properties:
@@ -487,5 +566,46 @@ components:
       example:
         proportion: 0.8008282
         year: year
+    ListRes_data:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        status:
+          type: integer
+        is_deleted:
+          type: integer
+        batch_id:
+          type: integer
+      example:
+        is_deleted: 1
+        batch_id: 5
+        id: 0
+        title: title
+        status: 6
+    DetailRes_data:
+      type: object
+      properties:
+        type:
+          type: string
+        sub_title:
+          type: string
+        content:
+          type: string
+        data:
+          type: string
+        status:
+          type: integer
+        is_deleted:
+          type: integer
+      example:
+        sub_title: sub_title
+        is_deleted: 6
+        data: data
+        type: type
+        content: content
+        status: 0
 x-original-swagger-version: "2.0"
 
