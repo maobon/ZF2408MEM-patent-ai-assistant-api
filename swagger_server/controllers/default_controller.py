@@ -4,11 +4,12 @@ import connexion
 import six
 from flask import jsonify, request, make_response
 
-from swagger_server.models import type_req, DetailReq, ListReq
+from swagger_server.models import type_req, DetailReq, ListReq, DeleteReq
 from swagger_server.models.applicant_req import ApplicantReq  # noqa: E501
 from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
 from swagger_server.models.area_res import AreaRes  # noqa: E501
+from swagger_server.models.cors.cors import make_cors_response
 from swagger_server.models.patent_report_req import PatentReportReq  # noqa: E501
 from swagger_server.models.patent_report_res import PatentReportRes  # noqa: E501
 from swagger_server.models.patent_report_detail_req import PatentReportDetailReq  # noqa: E501
@@ -40,15 +41,15 @@ def patent_applicant(body):  # noqa: E501
     :rtype: ApplicantRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
     body = request.get_json()
     applicant_req = ApplicantReq.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """
@@ -82,9 +83,9 @@ def patent_applicant(body):  # noqa: E501
             'data': [{'applicant': row['applicant'], 'num': row['num']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def patent_area(body):  # noqa: E501
@@ -98,15 +99,15 @@ def patent_area(body):  # noqa: E501
     :rtype: AreaRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
     body = request.get_json()
     area_req = AreaReq.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     # 获取前5个地域
@@ -185,7 +186,7 @@ def patent_area(body):  # noqa: E501
         }
         response_data['areas'].append(area_data)
 
-    return jsonify(response_data), 200
+    return make_cors_response(jsonify(response_data), 200)
 
 
 def patent_trend1(body):  # noqa: E501
@@ -199,15 +200,15 @@ def patent_trend1(body):  # noqa: E501
     :rtype: Trend1Res
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
     body = request.get_json()
     trend1_req = Trend1Req.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """
@@ -243,9 +244,9 @@ def patent_trend1(body):  # noqa: E501
             'data': [{'year': row['year'], 'num': row['num']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def patent_trend2(body):  # noqa: E501
@@ -259,15 +260,15 @@ def patent_trend2(body):  # noqa: E501
     :rtype: Trend2Res
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
     body = request.get_json()
     trend2_req = Trend2Req.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """
@@ -320,9 +321,9 @@ LIMIT 5;
                       'proportion': row['proportion']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def patent_type(body):  # noqa: E501
@@ -336,16 +337,16 @@ def patent_type(body):  # noqa: E501
     :rtype: TypeRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     type_req = TypeReq.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """SELECT patent_type, COUNT(*) as num FROM biz_patent_0713 WHERE meta_class like %s and summary like %s and
@@ -368,9 +369,10 @@ def patent_type(body):  # noqa: E501
             'data': [{'type': row['patent_type'], 'num': row['num']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
 
 def patent_report_save(body):  # noqa: E501
     """报告保存
@@ -383,17 +385,16 @@ def patent_report_save(body):  # noqa: E501
     :rtype: PatentReportRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
-
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     patent_report_req = PatentReportReq.from_dict(body)
 
     connection = create_connection1()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
 
@@ -431,9 +432,11 @@ def patent_report_save(body):  # noqa: E501
             'data': {'id': inserted_id}
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'insert fail'}), 500
+        return make_cors_response(jsonify({'message': 'insert fail'}), 500)
+
+
 def patent_report_detail_save(body):  # noqa: E501
     """报告详情保存
 
@@ -445,16 +448,16 @@ def patent_report_detail_save(body):  # noqa: E501
     :rtype: None
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     patent_report_detail_req = PatentReportDetailReq.from_dict(body)
 
     connection = create_connection1()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
 
@@ -466,7 +469,7 @@ def patent_report_detail_save(body):  # noqa: E501
 
     # 数据准备
     datas = [
-        (report_id, type,sub_title,content,json_data, datetime.now(), datetime.now(), 1, 0)
+        (report_id, type, sub_title, content, json_data, datetime.now(), datetime.now(), 1, 0)
     ]
 
     # SQL语句
@@ -494,9 +497,9 @@ def patent_report_detail_save(body):  # noqa: E501
             'data': {'id': inserted_id}
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'insert fail'}), 500
+        return make_cors_response(jsonify({'message': 'insert fail'}), 500)
 
 
 def patent_concentration(body):  # noqa: E501
@@ -510,16 +513,16 @@ def patent_concentration(body):  # noqa: E501
     :rtype: ConcentrationRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     concentration_req = ConcentrationReq.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """
@@ -629,9 +632,9 @@ LIMIT 5;
             'data': [{'year': row['year'], 'proportion': row['proportion']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def patent_technology(body):  # noqa: E501
@@ -645,16 +648,16 @@ def patent_technology(body):  # noqa: E501
     :rtype: TechnologyRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     technology_req = TechnologyReq.from_dict(body)
 
     connection = create_connection()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """  
@@ -701,9 +704,9 @@ LIMIT 5;
             'data': [{'class': row['class'], 'num': row['num']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def report_detail(body):  # noqa: E501
@@ -717,18 +720,18 @@ def report_detail(body):  # noqa: E501
     :rtype: DetailRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     detail_req = DetailReq.from_dict(body)
     if not detail_req.id:
-        return jsonify({'message': 'user id is none'}), 400
+        return make_cors_response(jsonify({'message': 'user id is none'}), 400)
 
     connection = create_connection1()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """select * from patent_ai_assistant.biz_patent_report_detail where report_id = %s;"""
@@ -739,13 +742,14 @@ def report_detail(body):  # noqa: E501
 
     if results:
         response = {
-            'data': [{'type': row['type'], 'sub_title': row['sub_title'], 'content': row['content'], "is_deleted": row['is_deleted'],
+            'data': [{'type': row['type'], 'sub_title': row['sub_title'], 'content': row['content'],
+                      "is_deleted": row['is_deleted'],
                       'status': row['status'], 'data': row['data']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
 def report_list(body):  # noqa: E501
@@ -759,18 +763,18 @@ def report_list(body):  # noqa: E501
     :rtype: ListRes
     """
     if request.method == 'OPTIONS':
-        return '', 200
+        return make_cors_response('', 200)
     if not request.is_json:
-        return jsonify({'message': 'Invalid input'}), 400
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
 
     body = request.get_json()
     list_req = ListReq.from_dict(body)
     if not list_req.user_id:
-        return jsonify({'message': 'user id is none'}), 400
+        return make_cors_response(jsonify({'message': 'user id is none'}), 400)
 
     connection = create_connection1()
     if connection is None:
-        return jsonify({'message': 'Database connection failed'}), 500
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
     query = """select * from biz_patent_report where user_id = %s;"""
@@ -782,9 +786,24 @@ def report_list(body):  # noqa: E501
     if results:
         response = {
             'data': [{'id': row['id'], 'title': row['title'], 'status': row['status'], "is_deleted": row['is_deleted'],
-                      'batch_id': row['batch_id']} for row in results]
+                      'batch_id': row['batch_id'], 'update_time': row['modified_time']} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
+        return make_cors_response(response_json, 200)
     else:
-        return jsonify({'message': 'No data found'}), 200
+        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
+
+def report_delete(body):  # noqa: E501
+    """删除报告
+
+     # noqa: E501
+
+    :param body:
+    :type body: dict | bytes
+
+    :rtype: None
+    """
+    if connexion.request.is_json:
+        body = DeleteReq.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'

@@ -241,6 +241,25 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+  /report/delete:
+    post:
+      summary: 删除报告
+      operationId: report_delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteReq'
+        required: true
+      responses:
+        "200":
+          description: success
+          content: {}
+        "400":
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
 components:
   schemas:
     Trend1Req:
@@ -462,6 +481,7 @@ components:
           $ref: '#/components/schemas/ListRes_data'
       example:
         data:
+          update_time: update_time
           is_deleted: 1
           batch_id: 5
           id: 0
@@ -485,6 +505,11 @@ components:
           type: type
           content: content
           status: 0
+    DeleteReq:
+      type: object
+      properties:
+        ids:
+          $ref: '#/components/schemas/DeleteReq_ids'
     Trend1Res_data:
       type: object
       properties:
@@ -585,6 +610,8 @@ components:
           type: integer
         title:
           type: string
+        update_time:
+          type: string
         status:
           type: integer
         is_deleted:
@@ -592,6 +619,7 @@ components:
         batch_id:
           type: integer
       example:
+        update_time: update_time
         is_deleted: 1
         batch_id: 5
         id: 0
@@ -619,5 +647,10 @@ components:
         type: type
         content: content
         status: 0
+    DeleteReq_ids:
+      type: object
+      properties:
+        id:
+          type: integer
 x-original-swagger-version: "2.0"
 

@@ -14,13 +14,15 @@ class ListResData(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: int=None, title: str=None, status: int=None, is_deleted: int=None, batch_id: int=None):  # noqa: E501
+    def __init__(self, id: int=None, title: str=None, update_time: str=None, status: int=None, is_deleted: int=None, batch_id: int=None):  # noqa: E501
         """ListResData - a model defined in Swagger
 
         :param id: The id of this ListResData.  # noqa: E501
         :type id: int
         :param title: The title of this ListResData.  # noqa: E501
         :type title: str
+        :param update_time: The update_time of this ListResData.  # noqa: E501
+        :type update_time: str
         :param status: The status of this ListResData.  # noqa: E501
         :type status: int
         :param is_deleted: The is_deleted of this ListResData.  # noqa: E501
@@ -31,6 +33,7 @@ class ListResData(Model):
         self.swagger_types = {
             'id': int,
             'title': str,
+            'update_time': str,
             'status': int,
             'is_deleted': int,
             'batch_id': int
@@ -39,12 +42,14 @@ class ListResData(Model):
         self.attribute_map = {
             'id': 'id',
             'title': 'title',
+            'update_time': 'update_time',
             'status': 'status',
             'is_deleted': 'is_deleted',
             'batch_id': 'batch_id'
         }
         self._id = id
         self._title = title
+        self._update_time = update_time
         self._status = status
         self._is_deleted = is_deleted
         self._batch_id = batch_id
@@ -101,6 +106,27 @@ class ListResData(Model):
         """
 
         self._title = title
+
+    @property
+    def update_time(self) -> str:
+        """Gets the update_time of this ListResData.
+
+
+        :return: The update_time of this ListResData.
+        :rtype: str
+        """
+        return self._update_time
+
+    @update_time.setter
+    def update_time(self, update_time: str):
+        """Sets the update_time of this ListResData.
+
+
+        :param update_time: The update_time of this ListResData.
+        :type update_time: str
+        """
+
+        self._update_time = update_time
 
     @property
     def status(self) -> int:
