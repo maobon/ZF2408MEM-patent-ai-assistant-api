@@ -325,13 +325,17 @@ components:
     AreaRes:
       type: object
       properties:
-        data:
-          $ref: '#/components/schemas/AreaRes_data'
+        years:
+          $ref: '#/components/schemas/AreaRes_years'
+        areas:
+          $ref: '#/components/schemas/AreaRes_areas'
       example:
-        data:
+        areas:
           area: area
+          data:
+            num: 0
+        years:
           year: year
-          num: 0
     TypeReq:
       type: object
       properties:
@@ -518,19 +522,31 @@ components:
       example:
         num: 0
         applicant: applicant
-    AreaRes_data:
+    AreaRes_years:
       type: object
       properties:
         year:
           type: string
-        area:
-          type: string
+      example:
+        year: year
+    AreaRes_areas_data:
+      type: object
+      properties:
         num:
           type: integer
       example:
-        area: area
-        year: year
         num: 0
+    AreaRes_areas:
+      type: object
+      properties:
+        area:
+          type: string
+        data:
+          $ref: '#/components/schemas/AreaRes_areas_data'
+      example:
+        area: area
+        data:
+          num: 0
     TypeRes_data:
       type: object
       properties:

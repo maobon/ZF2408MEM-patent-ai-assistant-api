@@ -14,11 +14,9 @@ class PatentReportReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: int=None, user_id: str=None, title: str=None, batch_id: str=None):  # noqa: E501
+    def __init__(self, user_id: str=None, title: str=None, batch_id: str=None):  # noqa: E501
         """PatentReportReq - a model defined in Swagger
 
-        :param id: The id of this PatentReportReq.  # noqa: E501
-        :type id: int
         :param user_id: The user_id of this PatentReportReq.  # noqa: E501
         :type user_id: str
         :param title: The title of this PatentReportReq.  # noqa: E501
@@ -27,19 +25,16 @@ class PatentReportReq(Model):
         :type batch_id: str
         """
         self.swagger_types = {
-            'id': int,
             'user_id': str,
             'title': str,
             'batch_id': str
         }
 
         self.attribute_map = {
-            'id': 'id',
             'user_id': 'user_id',
             'title': 'title',
             'batch_id': 'batch_id'
         }
-        self._id = id
         self._user_id = user_id
         self._title = title
         self._batch_id = batch_id
@@ -54,27 +49,6 @@ class PatentReportReq(Model):
         :rtype: PatentReportReq
         """
         return util.deserialize_model(dikt, cls)
-
-    @property
-    def id(self) -> int:
-        """Gets the id of this PatentReportReq.
-
-
-        :return: The id of this PatentReportReq.
-        :rtype: int
-        """
-        return self._id
-
-    @id.setter
-    def id(self, id: int):
-        """Sets the id of this PatentReportReq.
-
-
-        :param id: The id of this PatentReportReq.
-        :type id: int
-        """
-
-        self._id = id
 
     @property
     def user_id(self) -> str:

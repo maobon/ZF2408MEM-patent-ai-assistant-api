@@ -39,6 +39,8 @@ def patent_applicant(body):  # noqa: E501
 
     :rtype: ApplicantRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
     body = request.get_json()
@@ -95,6 +97,8 @@ def patent_area(body):  # noqa: E501
 
     :rtype: AreaRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
     body = request.get_json()
@@ -105,53 +109,83 @@ def patent_area(body):  # noqa: E501
         return jsonify({'message': 'Database connection failed'}), 500
 
     cursor = connection.cursor(dictionary=True)
+    # 获取前5个地域
+    top_areas_query = """
+       SELECT application_area_code AS area
+       FROM biz_patent_0713
+       WHERE 
+           YEAR(application_date) BETWEEN 2014 AND 2024
+           AND meta_class LIKE %s
+           AND summary LIKE %s
+           AND title LIKE %s
+       GROUP BY application_area_code
+       ORDER BY COUNT(*) DESC
+       LIMIT 5;
+       """
+
+    meta_class_pattern = f"%{area_req.industry}%" if area_req.industry else "%"
+    summary_pattern = f"%{area_req.key}%" if area_req.key else "%"
+    title_pattern = f"%{area_req.theme}%" if area_req.theme else "%"
+
+    cursor.execute(top_areas_query, (meta_class_pattern, summary_pattern, title_pattern))
+    top_areas = cursor.fetchall()
+    top_areas_list = [area['area'] for area in top_areas]
+
+    if len(top_areas_list) < 5:
+        top_areas_list.extend([''] * (5 - len(top_areas_list)))  # 确保有5个元素
+
+    # 获取这些地域的每年数据
     query = """
-    SELECT 
-    area, 
-    year, 
-    num
-FROM (
-    SELECT 
-        application_area_code AS area, 
-        YEAR(application_date) AS year, 
-        COUNT(*) AS num,
-        ROW_NUMBER() OVER (PARTITION BY YEAR(application_date) ORDER BY COUNT(*) DESC) as row_num
-    FROM 
-        biz_patent_0713
-    WHERE 
-        YEAR(application_date) BETWEEN 2017 AND 2024
-        AND meta_class LIKE %s
-        AND summary LIKE %s
-        AND title LIKE %s
-    GROUP BY 
-        application_area_code, YEAR(application_date)
-) as ranked
-WHERE 
-    row_num <= 5
-ORDER BY 
-    year, area;
-    """
-    like_pattern1 = f"%{area_req.industry}%"
-    if area_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern3 = f"%{area_req.key}%"
-    if area_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{area_req.theme}%"
-    if area_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern3, like_pattern4))
+       SELECT 
+           application_area_code AS area, 
+           YEAR(application_date) AS year, 
+           COUNT(*) AS num
+       FROM 
+           biz_patent_0713
+       WHERE 
+           YEAR(application_date) BETWEEN 2014 AND 2024
+           AND meta_class LIKE %s
+           AND summary LIKE %s
+           AND title LIKE %s
+           AND application_area_code IN (%s, %s, %s, %s, %s)
+       GROUP BY 
+           application_area_code, YEAR(application_date)
+       ORDER BY 
+           application_area_code, YEAR(application_date);
+       """
+
+    cursor.execute(query, (meta_class_pattern, summary_pattern, title_pattern, *top_areas_list))
     results = cursor.fetchall()
     close_connection(connection)
 
-    if results:
-        response = {
-            'data': [{'year': row['year'], 'area': row['area'], 'num': row['num']} for row in results]
+    # 初始化年份和区域数据结构
+    years = [2017, 2018, 2019, 2020, 2021]
+    areas_dict = {year: {} for year in years}
+
+    for result in results:
+        year = result['year']
+        area = result['area']
+        num = result['num']
+        if year in areas_dict:
+            areas_dict[year][area] = num
+
+    # 构建返回结构
+    response_data = {
+        'year': years,
+        'areas': []
+    }
+
+    # 通过所有可能的区域来填充数据
+    all_areas = set(area for year_data in areas_dict.values() for area in year_data.keys())
+
+    for area in all_areas:
+        area_data = {
+            'area': area,
+            'data': [areas_dict[year].get(area, 0) for year in years]
         }
-        response_json = json.dumps(response, ensure_ascii=False)
-        return make_response(response_json, 200, {'Content-Type': 'application/json'})
-    else:
-        return jsonify({'message': 'No data found'}), 200
+        response_data['areas'].append(area_data)
+
+    return jsonify(response_data), 200
 
 
 def patent_trend1(body):  # noqa: E501
@@ -164,6 +198,8 @@ def patent_trend1(body):  # noqa: E501
 
     :rtype: Trend1Res
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
     body = request.get_json()
@@ -222,6 +258,8 @@ def patent_trend2(body):  # noqa: E501
 
     :rtype: Trend2Res
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
     body = request.get_json()
@@ -297,6 +335,8 @@ def patent_type(body):  # noqa: E501
 
     :rtype: TypeRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 
@@ -342,6 +382,8 @@ def patent_report_save(body):  # noqa: E501
 
     :rtype: PatentReportRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
 
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
@@ -402,6 +444,8 @@ def patent_report_detail_save(body):  # noqa: E501
 
     :rtype: None
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 
@@ -465,6 +509,8 @@ def patent_concentration(body):  # noqa: E501
 
     :rtype: ConcentrationRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 
@@ -598,6 +644,8 @@ def patent_technology(body):  # noqa: E501
 
     :rtype: TechnologyRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 
@@ -668,6 +716,8 @@ def report_detail(body):  # noqa: E501
 
     :rtype: DetailRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 
@@ -708,6 +758,8 @@ def report_list(body):  # noqa: E501
 
     :rtype: ListRes
     """
+    if request.method == 'OPTIONS':
+        return '', 200
     if not request.is_json:
         return jsonify({'message': 'Invalid input'}), 400
 

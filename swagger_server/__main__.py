@@ -17,7 +17,7 @@ def main():
     flask_app = app.app
     # 定义非 Swagger 的蓝图
     flask_app.register_blueprint(createPdf)
-    CORS(flask_app)
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, allow_headers="*")
     app.run(host='0.0.0.0', port=8080)
 
 

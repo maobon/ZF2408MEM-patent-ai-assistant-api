@@ -6,7 +6,8 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.area_res_data import AreaResData  # noqa: F401,E501
+from swagger_server.models.area_res_areas import AreaResAreas  # noqa: F401,E501
+from swagger_server.models.area_res_years import AreaResYears  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,20 +16,25 @@ class AreaRes(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, data: AreaResData=None):  # noqa: E501
+    def __init__(self, years: AreaResYears=None, areas: AreaResAreas=None):  # noqa: E501
         """AreaRes - a model defined in Swagger
 
-        :param data: The data of this AreaRes.  # noqa: E501
-        :type data: AreaResData
+        :param years: The years of this AreaRes.  # noqa: E501
+        :type years: AreaResYears
+        :param areas: The areas of this AreaRes.  # noqa: E501
+        :type areas: AreaResAreas
         """
         self.swagger_types = {
-            'data': AreaResData
+            'years': AreaResYears,
+            'areas': AreaResAreas
         }
 
         self.attribute_map = {
-            'data': 'data'
+            'years': 'years',
+            'areas': 'areas'
         }
-        self._data = data
+        self._years = years
+        self._areas = areas
 
     @classmethod
     def from_dict(cls, dikt) -> 'AreaRes':
@@ -42,22 +48,43 @@ class AreaRes(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def data(self) -> AreaResData:
-        """Gets the data of this AreaRes.
+    def years(self) -> AreaResYears:
+        """Gets the years of this AreaRes.
 
 
-        :return: The data of this AreaRes.
-        :rtype: AreaResData
+        :return: The years of this AreaRes.
+        :rtype: AreaResYears
         """
-        return self._data
+        return self._years
 
-    @data.setter
-    def data(self, data: AreaResData):
-        """Sets the data of this AreaRes.
+    @years.setter
+    def years(self, years: AreaResYears):
+        """Sets the years of this AreaRes.
 
 
-        :param data: The data of this AreaRes.
-        :type data: AreaResData
+        :param years: The years of this AreaRes.
+        :type years: AreaResYears
         """
 
-        self._data = data
+        self._years = years
+
+    @property
+    def areas(self) -> AreaResAreas:
+        """Gets the areas of this AreaRes.
+
+
+        :return: The areas of this AreaRes.
+        :rtype: AreaResAreas
+        """
+        return self._areas
+
+    @areas.setter
+    def areas(self, areas: AreaResAreas):
+        """Sets the areas of this AreaRes.
+
+
+        :param areas: The areas of this AreaRes.
+        :type areas: AreaResAreas
+        """
+
+        self._areas = areas
