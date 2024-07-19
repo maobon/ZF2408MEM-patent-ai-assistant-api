@@ -106,21 +106,30 @@ def patent_area(body):  # noqa: E501
 
     cursor = connection.cursor(dictionary=True)
     query = """
-    SELECT
-    application_area_code AS area,
-    YEAR(application_date) AS year,
-    COUNT(*) AS num
-FROM
-    biz_patent_0713
-WHERE
-    YEAR(application_date) BETWEEN 2014 AND 2024
-  AND meta_class LIKE %s
-  AND summary like %s
-    AND title like %s
-GROUP BY
-    application_area_code, YEAR(application_date)
-ORDER BY
-    application_area_code, year;
+    SELECT 
+    area, 
+    year, 
+    num
+FROM (
+    SELECT 
+        application_area_code AS area, 
+        YEAR(application_date) AS year, 
+        COUNT(*) AS num,
+        ROW_NUMBER() OVER (PARTITION BY YEAR(application_date) ORDER BY COUNT(*) DESC) as row_num
+    FROM 
+        biz_patent_0713
+    WHERE 
+        YEAR(application_date) BETWEEN 2017 AND 2024
+        AND meta_class LIKE %s
+        AND summary LIKE %s
+        AND title LIKE %s
+    GROUP BY 
+        application_area_code, YEAR(application_date)
+) as ranked
+WHERE 
+    row_num <= 5
+ORDER BY 
+    year, area;
     """
     like_pattern1 = f"%{area_req.industry}%"
     if area_req.industry is None:

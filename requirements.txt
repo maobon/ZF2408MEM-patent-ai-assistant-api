@@ -19,3 +19,5 @@ SQLAlchemy==2.0.31
 pyppeteer==2.0.0
 shortuuid==1.0.13
 SQLAlchemy==2.0.31
+
+flask-cors
