@@ -51,5 +51,32 @@ def generate_pdf():
         return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
 
 
+
+@createPdf.route('/generate-pdf-test', methods=['OPTIONS', 'POST'])
+def generate_pdf_test():
+    if request.method == 'OPTIONS':
+        return make_cors_response('', 200)
+    reqdata = request.get_json()
+    if not reqdata or 'reportId' not in reqdata:
+        return make_cors_response(jsonify({"error": "No reportId provided"}), 400)
+
+    reportId = reqdata['reportId']
+    htmlData = {
+        'id': reportId
+    }
+    html_content = render_template('test.html', data=htmlData)
+    pdf_path = reportId+".pdf"
+
+    parent_conn, child_conn = Pipe()
+    p = Process(target=generate_pdf_process, args=(html_content, pdf_path, child_conn))
+    p.start()
+    p.join()
+
+    if parent_conn.recv() == 'done':
+        return make_cors_response(send_file(pdf_path, as_attachment=True))
+    else:
+        return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
+
+
 def generate_short_uuid():
     return shortuuid.ShortUUID().random(length=22)

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    body, .wrapper {
+      min-height: 100vh;
+    }
+    .chart {
+      width: 600px;
+      height: 500px;
+      margin: 30px auto;
+    }
+    .box {
+      width: 1000px;
+      margin: 0 auto 50px;
+    }
+    .title {
+      font-weight: bold;
+      color: #333;
+      font-size: 20px;
+      line-height: 80px;
+    }
+    .p-tit {
+      font-weight: bold;
+      color: #333;
+      font-size: 30px;
+      line-height: 80px;
+      text-align: center;
+      padding-top: 30px;
+    }
+    .txt {
+      color: #666;
+      font-size: 16px;
+      line-height: 30px;
+    }
+  </style>
+  <script type="text/javascript" src="https://registry.npmmirror.com/jquery/3.7.1/files/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.1/files/dist/echarts.min.js"></script>
+</head>
+<body>
+<div class="wrapper">
+  <p class="p-tit">一种基于锂电池的xxx技术研究报告</p>
+  <div class="box">
+    <p class="title">技术背景和目标</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+
+    <div class="chart" id="patent_trend1"></div>
+  </div>
+  <div class="box">
+    <p class="title">技术发展及衍变趋势分析</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart"  id="patent_trend2"></div>
+  </div>
+  <div class="box">
+    <p class="title">申请人排名分析</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart"  id="patent_applicant"></div>
+  </div>
+  <div class="box">
+    <p class="title">地域分析</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart" id="patent_area"></div>
+  </div>
+  <div class="box">
+    <p class="title">专利类型</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart" id="patent_type"></div>
+  </div>
+  <div class="box">
+    <p class="title">技术构成分析</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart" id="aaa"></div>
+  </div>
+  <div class="box">
+    <p class="title">专利集中度分析</p>
+    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
+    <div class="chart" id="bbb"></div>
+  </div>
+</div>
+</body>
+<script>
+  //==============================================================
+  var dom_patent_trend1 = document.getElementById('patent_trend1');
+  var chart_patent_trend1 = echarts.init(dom_patent_trend1, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_patent_trend1 = {
+    animation: false,
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar'
+      }
+    ]
+  };
+  chart_patent_trend1.setOption(option_patent_trend1);
+  //==============================================================
+  var dom_patent_trend2 = document.getElementById('patent_trend2');
+  var chart_patent_trend2 = echarts.init(dom_patent_trend2, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_patent_trend2 = {
+    animation: false,
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        crossStyle: {
+          color: '#999'
+        }
+      }
+    },
+    toolbox: {
+      feature: {
+        dataView: { show: true, readOnly: false },
+        magicType: { show: true, type: ['line', 'bar'] },
+        restore: { show: true },
+        saveAsImage: { show: true }
+      }
+    },
+    legend: {
+      data: ['Evaporation', 'Precipitation', 'Temperature']
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        axisPointer: {
+          type: 'shadow'
+        }
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        name: 'Precipitation',
+        min: 0,
+        max: 250,
+        interval: 50,
+        axisLabel: {
+          formatter: '{value} ml'
+        }
+      },
+      {
+        type: 'value',
+        name: 'Temperature',
+        min: 0,
+        max: 25,
+        interval: 5,
+        axisLabel: {
+          formatter: '{value} °C'
+        }
+      }
+    ],
+    series: [
+      {
+        name: 'Evaporation',
+        type: 'bar',
+        tooltip: {
+          valueFormatter: function (value) {
+            return value + ' ml';
+          }
+        },
+        data: [
+          2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
+        ]
+      },
+      {
+        name: 'Precipitation',
+        type: 'bar',
+        tooltip: {
+          valueFormatter: function (value) {
+            return value + ' ml';
+          }
+        },
+        data: [
+          2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
+        ]
+      },
+      {
+        name: 'Temperature',
+        type: 'line',
+        yAxisIndex: 1,
+        tooltip: {
+          valueFormatter: function (value) {
+            return value + ' °C';
+          }
+        },
+        data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+      }
+    ]
+  };
+  chart_patent_trend2.setOption(option_patent_trend2);
+  //==============================================================
+  var dom_patent_applicant = document.getElementById('patent_applicant');
+  var chart_patent_applicant = echarts.init(dom_patent_applicant, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_patent_applicant = {
+    animation: false,
+    title: {
+      text: 'World Population'
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    legend: {},
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+      type: 'category',
+      data: ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World']
+    },
+    series: [
+      {
+        name: '2011',
+        type: 'bar',
+        data: [18203, 23489, 29034, 104970, 131744, 630230]
+      },
+      {
+        name: '2012',
+        type: 'bar',
+        data: [19325, 23438, 31000, 121594, 134141, 681807]
+      }
+    ]
+  };
+  chart_patent_applicant.setOption(option_patent_applicant);
+  //==============================================================
+
+  var dom_patent_area = document.getElementById('patent_area');
+  var chart_patent_area = echarts.init(dom_patent_area, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_patent_area = {
+    animation: false,
+    title: {
+      text: 'Stacked Line'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Email',
+        type: 'line',
+        stack: 'Total',
+        data: [120, 132, 101, 134, 90, 230, 210]
+      },
+      {
+        name: 'Union Ads',
+        type: 'line',
+        stack: 'Total',
+        data: [220, 182, 191, 234, 290, 330, 310]
+      },
+      {
+        name: 'Video Ads',
+        type: 'line',
+        stack: 'Total',
+        data: [150, 232, 201, 154, 190, 330, 410]
+      },
+      {
+        name: 'Direct',
+        type: 'line',
+        stack: 'Total',
+        data: [320, 332, 301, 334, 390, 330, 320]
+      },
+      {
+        name: 'Search Engine',
+        type: 'line',
+        stack: 'Total',
+        data: [820, 932, 901, 934, 1290, 1330, 1320]
+      }
+    ]
+  };
+
+  chart_patent_area.setOption(option_patent_area);
+  //==============================================================
+  var dom_patent_type = document.getElementById('patent_type');
+  var chart_patent_type = echarts.init(dom_patent_type, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_patent_type = {
+    animation: false,
+    title: {
+      text: 'Referer of a Website',
+      subtext: 'Fake Data',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left'
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: '50%',
+        data: [
+          { value: 1048, name: 'Search Engine' },
+          { value: 735, name: 'Direct' },
+          { value: 580, name: 'Email' },
+          { value: 484, name: 'Union Ads' },
+          { value: 300, name: 'Video Ads' }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  };
+
+  chart_patent_type.setOption(option_patent_type);
+  //==============================================================
+  //          var dom_aaa = document.getElementById('aaa');
+  //         var chart_aaa = echarts.init(dom_aaa, null, {
+  //             renderer: 'canvas',
+  //             useDirtyRect: false
+  //         });
+  //         var ROOT_PATH = 'https://echarts.apache.org/examples';
+  //     var option_aaa;
+
+  //     chart_aaa.showLoading();
+  // $.get(ROOT_PATH + '/data/asset/data/disk.tree.json', function (diskData) {
+  //   chart_aaa.hideLoading();
+  //   const formatUtil = echarts.format;
+  //   function getLevelOption() {
+  //     return [
+  //       {
+  //         itemStyle: {
+  //           borderWidth: 0,
+  //           gapWidth: 5
+  //         }
+  //       },
+  //       {
+  //         itemStyle: {
+  //           gapWidth: 1
+  //         }
+  //       },
+  //       {
+  //         colorSaturation: [0.35, 0.5],
+  //         itemStyle: {
+  //           gapWidth: 1,
+  //           borderColorSaturation: 0.6
+  //         }
+  //       }
+  //     ];
+  //   }
+  //   chart_aaa.setOption(
+  //     (option_aaa = {
+  //       title: {
+  //         text: 'Disk Usage',
+  //         left: 'center'
+  //       },
+  //       tooltip: {
+  //         formatter: function (info) {
+  //           var value = info.value;
+  //           var treePathInfo = info.treePathInfo;
+  //           var treePath = [];
+  //           for (var i = 1; i < treePathInfo.length; i++) {
+  //             treePath.push(treePathInfo[i].name);
+  //           }
+  //           return [
+  //             '<div class="tooltip-title">' +
+  //               formatUtil.encodeHTML(treePath.join('/')) +
+  //               '</div>',
+  //             'Disk Usage: ' + formatUtil.addCommas(value) + ' KB'
+  //           ].join('');
+  //         }
+  //       },
+  //       series: [
+  //         {
+  //           name: 'Disk Usage',
+  //           type: 'treemap',
+  //           visibleMin: 300,
+  //           label: {
+  //             show: true,
+  //             formatter: '{b}'
+  //           },
+  //           itemStyle: {
+  //             borderColor: '#fff'
+  //           },
+  //           levels: getLevelOption(),
+  //           data: diskData
+  //         }
+  //       ]
+  //     })
+  //   );
+  // });
+
+  //         chart_aaa.setOption(option_aaa);
+  //==============================================================
+  var dom_bbb = document.getElementById('bbb');
+  var chart_bbb = echarts.init(dom_bbb, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const option_bbb = {
+    animation: false,
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        type: 'line',
+        smooth: true
+      }
+    ]
+  };
+  chart_bbb.setOption(option_bbb);
+  //==============================================================
+</script>
+</html>

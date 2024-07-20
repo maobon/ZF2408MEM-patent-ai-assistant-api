@@ -28,7 +28,7 @@ from swagger_server.models.trend2_res import Trend2Res  # noqa: E501
 from swagger_server.models.type_req import TypeReq  # noqa: E501
 from swagger_server.models.type_res import TypeRes  # noqa: E501
 from swagger_server import util
-from datetime import datetime
+from swagger_server import date_util
 
 
 def patent_applicant_options():  # noqa: E501
@@ -469,7 +469,7 @@ def patent_report_save(body):  # noqa: E501
 
     # 数据准备
     data = [
-        (user_id, title, datetime.now(), datetime.now(), 1, 0, batch_id)
+        (user_id, title, date_util.getNowDateTime(), date_util.getNowDateTime(), 1, 0, batch_id)
     ]
 
     # SQL语句
@@ -545,7 +545,7 @@ def patent_report_detail_save(body):  # noqa: E501
 
     # 数据准备
     datas = [
-        (report_id, type, sub_title, content, json_data, datetime.now(), datetime.now(), 1, 0)
+        (report_id, type, sub_title, content, json_data, date_util.getNowDateTime(), date_util.getNowDateTime(), 1, 0)
     ]
 
     # SQL语句
