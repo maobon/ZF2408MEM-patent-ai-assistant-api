@@ -4,12 +4,15 @@ from pyppeteer import launch
 from multiprocessing import Process, Pipe
 
 from swagger_server.models.cors.cors import make_cors_response
+import os
+os.environ['PYPPETEER_DOWNLOAD_HOST'] = 'https://npm.taobao.org/mirrors'
 
 createPdf = Blueprint('createPdf', __name__)
 
 
 async def html_to_pdf(html_content, output_path):
-    browser = await launch(headless=True)
+    browser = await launch(executablePath='/usr/bin/chromium', headless=True, args=['--no-sandbox', '--disable-dev-shm-usage'])
+    # browser = await launch(headless=True)
     page = await browser.newPage()
     await page.setContent(html_content)
     await page.waitForSelector("canvas", {'timeout': 180000})  # 等待 canvas 元素加载完成
