@@ -37,8 +37,8 @@ def generate_pdf():
     htmlData = {
         'id': reportId
     }
-    html_content = render_template('report-detail.html', chart_data=htmlData)
-    pdf_path = reportId + ".pdf"
+    html_content = render_template('frame.html', data=htmlData)
+    pdf_path = reportId+".pdf"
 
     parent_conn, child_conn = Pipe()
     p = Process(target=generate_pdf_process, args=(html_content, pdf_path, child_conn))
@@ -46,7 +46,7 @@ def generate_pdf():
     p.join()
 
     if parent_conn.recv() == 'done':
-        return make_cors_response(send_file(pdf_path, as_attachment=True))
+        return send_file(pdf_path, as_attachment=True)
     else:
         return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
 

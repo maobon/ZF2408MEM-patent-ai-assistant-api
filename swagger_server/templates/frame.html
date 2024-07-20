@@ -150,6 +150,7 @@
     patent_trend1: function (newValue) {
       const initChart = (xAxisData, seriesData) => {
         const option = {
+          animation: false,
           xAxis: {
             type: 'category',
             data: xAxisData
@@ -174,7 +175,7 @@
 
         if (jsonData) {
           let grouped = {};
-          jsonData.data.forEach(item => {
+          jsonData?.data?.forEach(item => {
             for (let key in item) {
               if (!grouped[key]) {
                 grouped[key] = [];
@@ -196,6 +197,7 @@
       const initChart = (result) => {
 
         const option = {
+          animation: false,
 
           legend: {
             data: ['授权', '申请', '授权占比']
@@ -275,11 +277,11 @@
 
         if (jsonData) {
           const data = jsonData.data;
-          const years = data.map(item => item.year);
-          const authorization_nums = data.map(item => item.authorization_num);
-          const apply_nums = data.map(item => item.apply_num);
+          const years = data?.map(item => item.year);
+          const authorization_nums = data?.map(item => item.authorization_num);
+          const apply_nums = data?.map(item => item.apply_num);
           let percent = [];
-          authorization_nums.forEach((num, index) => {
+          authorization_nums?.forEach((num, index) => {
             let per = 0;
             if (num >= apply_nums[index]) {
               per = 0
@@ -309,6 +311,7 @@
     patent_applicant: function (newValue) {
       const initChart = (yAxisData, seriesData) => {
         const option = {
+          animation: false,
           // title: {
           //     text: 'World Population'
           // },
@@ -350,7 +353,7 @@
 
         if (jsonData) {
           let grouped = {};
-          jsonData.data.forEach(item => {
+          jsonData?.data?.forEach(item => {
             for (let key in item) {
               if (!grouped[key]) {
                 grouped[key] = [];
@@ -370,6 +373,7 @@
     patent_area: function (newValue) {
       const initChart = (series, year) => {
         const option = {
+          animation: false,
           animation: false,
           title: {
             text: 'Stacked Line'
@@ -433,6 +437,7 @@
 
       const initChart = (seriesData) => {
         const option = {
+          animation: false,
           // title: {
           //     text: 'Referer of a Website',
           //     subtext: 'Fake Data',
@@ -473,7 +478,7 @@
         if (jsonData) {
 
           // 遍历对象数组并修改字段名
-          jsonData.data = jsonData.data.map(item => {
+          jsonData.data = jsonData.data?.map(item => {
             return {
               name: item.type,
               value: item.num
@@ -490,6 +495,7 @@
     patent_technology: function (newValue) {
       const initChart = (formattedData) => {
         const option = {
+          animation: false,
           // title:{
           //         text:'矩形树',
           //         left: 'center',     // 设置标题水平居中
@@ -543,7 +549,7 @@
         patent_technology_txt.innerHTML = res_content;
 
         if (jsonData) {
-          const formattedData = jsonData.data.map(item => ({
+          const formattedData = jsonData.data?.map(item => ({
             name: item.class + item.num,
             value: item.num
           }));
@@ -560,6 +566,7 @@
     patent_concentration: function (newValue) {
       const initChart = (xAxisData, seriesData) => {
         const option = {
+          animation: false,
           xAxis: {
             type: 'category',
             data: xAxisData
@@ -584,7 +591,7 @@
 
         if (jsonData) {
           let grouped = {};
-          jsonData.data.forEach(item => {
+          jsonData?.data?.forEach(item => {
             for (let key in item) {
               if (!grouped[key]) {
                 grouped[key] = [];
@@ -633,7 +640,7 @@
   //     }
   //   });
   // }
-  window.onload = function () {
+window.onload = function () {
     window.data = {{ data | tojson }}
     const id = window.data.id;
   if (id) {
