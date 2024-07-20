@@ -27,6 +27,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 专利趋势1
+      operationId: patent_trend1_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/trend2:
     post:
       summary: 专利趋势2
@@ -48,6 +56,14 @@ paths:
           description: Invalid input
           content: {}
       x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 专利趋势2
+      operationId: patent_trend2_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/applicant:
     post:
@@ -71,6 +87,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 申请人分析
+      operationId: patent_applicant_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/area:
     post:
       summary: 地域分析
@@ -92,6 +116,14 @@ paths:
           description: Invalid input
           content: {}
       x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 地域分析
+      operationId: patent_area_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/type:
     post:
@@ -115,6 +147,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 类型分析
+      operationId: patent_type_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent_report/save:
     post:
       summary: 报告保存
@@ -134,6 +174,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 报告保存
+      operationId: patent_report_save_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent_report_detail/save:
     post:
       summary: 报告详情保存
@@ -152,6 +200,14 @@ paths:
           description: Invalid input
           content: {}
       x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 报告详情保存
+      operationId: patent_report_detail_save_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/technology:
     post:
@@ -175,6 +231,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 技术构成分析
+      operationId: patent_technology_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/concentration:
     post:
       summary: 集中度分析
@@ -196,6 +260,14 @@ paths:
           description: Invalid input
           content: {}
       x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 集中度分析
+      operationId: patent_concentration_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /report/list:
     post:
@@ -219,6 +291,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 报告列表
+      operationId: report_list_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /report/detail:
     post:
       summary: 报告详情
@@ -241,6 +321,14 @@ paths:
           content: {}
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 报告详情
+      operationId: report_detail_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
+      x-openapi-router-controller: swagger_server.controllers.default_controller
   /report/delete:
     post:
       summary: 删除报告
@@ -259,6 +347,14 @@ paths:
           description: Invalid input
           content: {}
       x-codegen-request-body-name: body
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+    options:
+      summary: CORS support for 删除报告
+      operationId: report_delete_options
+      responses:
+        "200":
+          description: CORS preflight request successful
+          content: {}
       x-openapi-router-controller: swagger_server.controllers.default_controller
 components:
   schemas:

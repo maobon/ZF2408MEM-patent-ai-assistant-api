@@ -8,6 +8,12 @@ schemes:
   - http
 paths:
   /patent/trend1:
+    options:
+      summary: CORS support for 专利趋势1
+      operationId: patent_trend1_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 专利趋势1
       operationId: patent_trend1
@@ -29,6 +35,12 @@ paths:
         '400':
           description: Invalid input
   /patent/trend2:
+    options:
+      summary: CORS support for 专利趋势2
+      operationId: patent_trend2_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 专利趋势2
       operationId: patent_trend2
@@ -50,6 +62,12 @@ paths:
         '400':
           description: Invalid input
   /patent/applicant:
+    options:
+      summary: CORS support for 申请人分析
+      operationId: patent_applicant_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 申请人分析
       operationId: patent_applicant
@@ -71,6 +89,12 @@ paths:
         '400':
           description: Invalid input
   /patent/area:
+    options:
+      summary: CORS support for 地域分析
+      operationId: patent_area_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 地域分析
       operationId: patent_area
@@ -92,6 +116,12 @@ paths:
         '400':
           description: Invalid input
   /patent/type:
+    options:
+      summary: CORS support for 类型分析
+      operationId: patent_type_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 类型分析
       operationId: patent_type
@@ -113,6 +143,12 @@ paths:
         '400':
           description: Invalid input
   /patent_report/save:
+    options:
+      summary: CORS support for 报告保存
+      operationId: patent_report_save_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 报告保存
       operationId: patent_report_save
@@ -139,6 +175,12 @@ paths:
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent_report_detail/save:
+    options:
+      summary: CORS support for 报告详情保存
+      operationId: patent_report_detail_save_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 报告详情保存
       operationId: patent_report_detail_save
@@ -165,6 +207,12 @@ paths:
       x-codegen-request-body-name: body
       x-openapi-router-controller: swagger_server.controllers.default_controller
   /patent/technology:
+    options:
+      summary: CORS support for 技术构成分析
+      operationId: patent_technology_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 技术构成分析
       operationId: patent_technology
@@ -186,6 +234,12 @@ paths:
         '400':
           description: Invalid input
   /patent/concentration:
+    options:
+      summary: CORS support for 集中度分析
+      operationId: patent_concentration_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 集中度分析
       operationId: patent_concentration
@@ -207,6 +261,12 @@ paths:
         '400':
           description: Invalid input
   /report/list:
+    options:
+      summary: CORS support for 报告列表
+      operationId: report_list_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 报告列表
       operationId: report_list
@@ -228,6 +288,12 @@ paths:
         '400':
           description: Invalid input
   /report/detail:
+    options:
+      summary: CORS support for 报告详情
+      operationId: report_detail_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 报告详情
       operationId: report_detail
@@ -249,6 +315,12 @@ paths:
         '400':
           description: Invalid input
   /report/delete:
+    options:
+      summary: CORS support for 删除报告
+      operationId: report_delete_options
+      responses:
+        '200':
+          description: CORS preflight request successful
     post:
       summary: 删除报告
       operationId: report_delete

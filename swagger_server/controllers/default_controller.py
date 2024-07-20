@@ -3,6 +3,7 @@ import json
 import connexion
 import six
 from flask import jsonify, request, make_response
+from mysql.connector import Error
 
 from swagger_server.models import type_req, DetailReq, ListReq, DeleteReq
 from swagger_server.models.applicant_req import ApplicantReq  # noqa: E501
@@ -30,6 +31,17 @@ from swagger_server import util
 from datetime import datetime
 
 
+def patent_applicant_options():  # noqa: E501
+    """CORS support for 申请人分析
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def patent_applicant(body):  # noqa: E501
     """申请人分析
 
@@ -40,8 +52,6 @@ def patent_applicant(body):  # noqa: E501
 
     :rtype: ApplicantRes
     """
-    if request.method == 'OPTIONS':
-        return make_cors_response('', 200)
     if not request.is_json:
         return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
     body = request.get_json()
@@ -86,6 +96,17 @@ def patent_applicant(body):  # noqa: E501
         return make_cors_response(response_json, 200)
     else:
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
+
+def patent_area_options():  # noqa: E501
+    """CORS support for 地域分析
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
 
 
 def patent_area(body):  # noqa: E501
@@ -189,6 +210,17 @@ def patent_area(body):  # noqa: E501
     return make_cors_response(jsonify(response_data), 200)
 
 
+def patent_trend1_options():  # noqa: E501
+    """CORS support for 专利趋势1
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def patent_trend1(body):  # noqa: E501
     """专利趋势1
 
@@ -247,6 +279,17 @@ def patent_trend1(body):  # noqa: E501
         return make_cors_response(response_json, 200)
     else:
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
+
+def patent_trend2_options():  # noqa: E501
+    """CORS support for 专利趋势2
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
 
 
 def patent_trend2(body):  # noqa: E501
@@ -326,6 +369,17 @@ LIMIT 5;
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
+def patent_type_options():  # noqa: E501
+    """CORS support for 类型分析
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def patent_type(body):  # noqa: E501
     """类型分析
 
@@ -372,6 +426,17 @@ def patent_type(body):  # noqa: E501
         return make_cors_response(response_json, 200)
     else:
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
+
+def patent_report_save_options():  # noqa: E501
+    """CORS support for 报告保存
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
 
 
 def patent_report_save(body):  # noqa: E501
@@ -437,6 +502,17 @@ def patent_report_save(body):  # noqa: E501
         return make_cors_response(jsonify({'message': 'insert fail'}), 500)
 
 
+def patent_report_detail_save_options():  # noqa: E501
+    """CORS support for 报告详情保存
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def patent_report_detail_save(body):  # noqa: E501
     """报告详情保存
 
@@ -500,6 +576,17 @@ def patent_report_detail_save(body):  # noqa: E501
         return make_cors_response(response_json, 200)
     else:
         return make_cors_response(jsonify({'message': 'insert fail'}), 500)
+
+
+def patent_concentration_options():  # noqa: E501
+    """CORS support for 集中度分析
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
 
 
 def patent_concentration(body):  # noqa: E501
@@ -637,6 +724,17 @@ LIMIT 5;
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
+def patent_technology_options():  # noqa: E501
+    """CORS support for 技术构成分析
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def patent_technology(body):  # noqa: E501
     """技术构成分析
 
@@ -709,6 +807,17 @@ LIMIT 5;
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
+def report_detail_options():  # noqa: E501
+    """CORS support for 报告详情
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def report_detail(body):  # noqa: E501
     """报告详情
 
@@ -752,6 +861,17 @@ def report_detail(body):  # noqa: E501
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
 
 
+def report_list_options():  # noqa: E501
+    """CORS support for 报告列表
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
+
+
 def report_list(body):  # noqa: E501
     """报告列表
 
@@ -786,12 +906,23 @@ def report_list(body):  # noqa: E501
     if results:
         response = {
             'data': [{'id': row['id'], 'title': row['title'], 'status': row['status'], "is_deleted": row['is_deleted'],
-                      'batch_id': row['batch_id'], 'update_time': row['modified_time']} for row in results]
+                      'batch_id': row['batch_id'], 'update_time': row['modified_time'].isoformat()} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
         return make_cors_response(response_json, 200)
     else:
         return make_cors_response(jsonify({'message': 'No data found'}), 200)
+
+
+def report_delete_options():  # noqa: E501
+    """CORS support for 删除报告
+
+     # noqa: E501
+
+
+    :rtype: None
+    """
+    return make_cors_response('', 200)
 
 
 def report_delete(body):  # noqa: E501
@@ -804,6 +935,34 @@ def report_delete(body):  # noqa: E501
 
     :rtype: None
     """
-    if connexion.request.is_json:
-        body = DeleteReq.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    if not request.is_json:
+        return make_cors_response(jsonify({'message': 'Invalid input'}), 400)
+
+    body = request.get_json()
+    ids = body.get('ids', [])
+    if not ids:
+        return make_cors_response(jsonify({'message': 'user id is none'}), 400)
+
+    connection = create_connection1()
+    if connection is None:
+        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+
+    try:
+        cursor = connection.cursor()
+
+        delete_query = "DELETE FROM biz_patent_report WHERE id IN (%s)" % ','.join(['%s'] * len(ids))
+        cursor.execute(delete_query, ids)
+        delete_query1 = "DELETE FROM biz_patent_report_detail WHERE report_id IN (%s)" % ','.join(['%s'] * len(ids))
+        cursor.execute(delete_query1, ids)
+        connection.commit()
+
+        close_connection(connection)
+
+        response = {'message': 'Items deleted successfully'}
+        response_json = json.dumps(response, ensure_ascii=False)
+        return make_cors_response(response_json, 200)
+
+    except Error as e:
+        print(f"Error: {e}")
+        close_connection(connection)
+        return make_cors_response(jsonify({'message': 'Failed to delete items'}), 500)
