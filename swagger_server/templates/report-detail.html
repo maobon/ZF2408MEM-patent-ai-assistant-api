@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
+  <script type="text/javascript" src="https://registry.npmmirror.com/jquery/3.7.1/files/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.1/files/dist/echarts.min.js"></script>
+
   <style>
     * {
       padding: 0;
       margin: 0;
     }
-    body, .wrapper {
+
+    body,
+    .wrapper {
       min-height: 100vh;
     }
+
     .chart {
       width: 600px;
       height: 500px;
       margin: 30px auto;
     }
+
     .box {
       width: 1000px;
       margin: 0 auto 50px;
     }
+
     .title {
       font-weight: bold;
       color: #333;
       font-size: 20px;
       line-height: 80px;
     }
+
     .p-tit {
       font-weight: bold;
       color: #333;
@@ -33,449 +43,617 @@
       text-align: center;
       padding-top: 30px;
     }
+
     .txt {
       color: #666;
       font-size: 16px;
       line-height: 30px;
     }
   </style>
-  <script type="text/javascript" src="https://registry.npmmirror.com/jquery/3.7.1/files/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="https://registry.npmmirror.com/echarts/5.5.1/files/dist/echarts.min.js"></script>
 </head>
-<body>
-<div class="wrapper">
-  <p class="p-tit">一种基于锂电池的xxx技术研究报告</p>
-  <div class="box">
-    <p class="title">技术背景和目标</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
 
-    <div class="chart" id="patent_trend1"></div>
+<body>
+  <div class="wrapper">
+    <p class="p-tit">一种基于锂电池的xxx技术研究报告</p>
+    <div class="box">
+      <p class="title">技术背景和目标</p>
+      <p class="txt" id="patent_trend1_txt">
+      <div class="chart" id="patent_trend1"></div>
+    </div>
+    <div class="box">
+      <p class="title">技术发展及衍变趋势分析</p>
+      <p class="txt" id="patent_trend2_txt">
+      <div class="chart" id="patent_trend2"></div>
+    </div>
+    <div class="box">
+      <p class="title">申请人排名分析</p>
+      <p class="txt" id="patent_applicant_txt">
+      <div class="chart" id="patent_applicant"></div>
+    </div>
+    <div class="box">
+      <p class="title">地域分析</p>
+      <p class="txt" id="patent_area_txt">
+      <div class="chart" id="patent_area"></div>
+    </div>
+    <div class="box">
+      <p class="title">专利类型</p>
+      <p class="txt" id="patent_type_txt">
+      <div class="chart" id="patent_type"></div>
+    </div>
+    <div class="box">
+      <p class="title">技术构成分析</p>
+      <p class="txt" id="patent_technology_txt">
+      <div class="chart" id="patent_technology"></div>
+    </div>
+    <div class="box">
+      <p class="title">专利集中度分析</p>
+      <p class="txt" id="patent_concentration_txt">
+      <div class="chart" id="patent_concentration"></div>
+    </div>
   </div>
-  <div class="box">
-    <p class="title">技术发展及衍变趋势分析</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart"  id="patent_trend2"></div>
-  </div>
-  <div class="box">
-    <p class="title">申请人排名分析</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart"  id="patent_applicant"></div>
-  </div>
-  <div class="box">
-    <p class="title">地域分析</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart" id="patent_area"></div>
-  </div>
-  <div class="box">
-    <p class="title">专利类型</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart" id="patent_type"></div>
-  </div>
-  <div class="box">
-    <p class="title">技术构成分析</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart" id="aaa"></div>
-  </div>
-  <div class="box">
-    <p class="title">专利集中度分析</p>
-    <p class="txt">2004年初，在省统计局负责国民经济核算的朱飞飞突然接到一个任务，参与分析浙江GDP增长过程中的代价。谈及当时分析的结果，朱飞飞回忆道：“像耕地面积的减少这一块，1996年到2000年这4年时间，每年也就减少21.95万亩，但是2003一年，它就减少了62.38万亩。我们的生产方式还是比较粗放的，应该是面临着所谓的‘成长的烦恼’。”</p>
-    <div class="chart" id="bbb"></div>
-  </div>
-</div>
 </body>
 <script>
-  //==============================================================
   var dom_patent_trend1 = document.getElementById('patent_trend1');
+  var dom_patent_trend2 = document.getElementById('patent_trend2');
+  var dom_patent_applicant = document.getElementById('patent_applicant');
+  var dom_patent_area = document.getElementById('patent_area');
+  var dom_patent_type = document.getElementById('patent_type');
+  var dom_patent_technology = document.getElementById('patent_technology');
+  var dom_patent_concentration = document.getElementById('patent_concentration');
+
+
+  const patent_trend1_txt = document.getElementById('patent_trend1_txt');
+  const patent_trend2_txt = document.getElementById('patent_trend2_txt');
+  const patent_applicant_txt = document.getElementById('patent_applicant_txt');
+  const patent_area_txt = document.getElementById('patent_area_txt');
+  const patent_type_txt = document.getElementById('patent_type_txt');
+  const patent_technology_txt = document.getElementById('patent_technology_txt');
+  const patent_concentration_txt = document.getElementById('patent_concentration_txt');
+
+
   var chart_patent_trend1 = echarts.init(dom_patent_trend1, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_patent_trend1 = {
-    animation: false,
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [120, 200, 150, 80, 70, 110, 130],
-        type: 'bar'
-      }
-    ]
-  };
-  chart_patent_trend1.setOption(option_patent_trend1);
-  //==============================================================
-  var dom_patent_trend2 = document.getElementById('patent_trend2');
   var chart_patent_trend2 = echarts.init(dom_patent_trend2, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_patent_trend2 = {
-    animation: false,
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross',
-        crossStyle: {
-          color: '#999'
-        }
-      }
-    },
-    toolbox: {
-      feature: {
-        dataView: { show: true, readOnly: false },
-        magicType: { show: true, type: ['line', 'bar'] },
-        restore: { show: true },
-        saveAsImage: { show: true }
-      }
-    },
-    legend: {
-      data: ['Evaporation', 'Precipitation', 'Temperature']
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        axisPointer: {
-          type: 'shadow'
-        }
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        name: 'Precipitation',
-        min: 0,
-        max: 250,
-        interval: 50,
-        axisLabel: {
-          formatter: '{value} ml'
-        }
-      },
-      {
-        type: 'value',
-        name: 'Temperature',
-        min: 0,
-        max: 25,
-        interval: 5,
-        axisLabel: {
-          formatter: '{value} °C'
-        }
-      }
-    ],
-    series: [
-      {
-        name: 'Evaporation',
-        type: 'bar',
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + ' ml';
-          }
-        },
-        data: [
-          2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
-        ]
-      },
-      {
-        name: 'Precipitation',
-        type: 'bar',
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + ' ml';
-          }
-        },
-        data: [
-          2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-        ]
-      },
-      {
-        name: 'Temperature',
-        type: 'line',
-        yAxisIndex: 1,
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + ' °C';
-          }
-        },
-        data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-      }
-    ]
-  };
-  chart_patent_trend2.setOption(option_patent_trend2);
-  //==============================================================
-  var dom_patent_applicant = document.getElementById('patent_applicant');
   var chart_patent_applicant = echarts.init(dom_patent_applicant, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_patent_applicant = {
-    animation: false,
-    title: {
-      text: 'World Population'
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {},
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'value',
-      boundaryGap: [0, 0.01]
-    },
-    yAxis: {
-      type: 'category',
-      data: ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World']
-    },
-    series: [
-      {
-        name: '2011',
-        type: 'bar',
-        data: [18203, 23489, 29034, 104970, 131744, 630230]
-      },
-      {
-        name: '2012',
-        type: 'bar',
-        data: [19325, 23438, 31000, 121594, 134141, 681807]
-      }
-    ]
-  };
-  chart_patent_applicant.setOption(option_patent_applicant);
-  //==============================================================
-
-  var dom_patent_area = document.getElementById('patent_area');
   var chart_patent_area = echarts.init(dom_patent_area, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_patent_area = {
-    animation: false,
-    title: {
-      text: 'Stacked Line'
-    },
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: 'Email',
-        type: 'line',
-        stack: 'Total',
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: 'Union Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: 'Video Ads',
-        type: 'line',
-        stack: 'Total',
-        data: [150, 232, 201, 154, 190, 330, 410]
-      },
-      {
-        name: 'Direct',
-        type: 'line',
-        stack: 'Total',
-        data: [320, 332, 301, 334, 390, 330, 320]
-      },
-      {
-        name: 'Search Engine',
-        type: 'line',
-        stack: 'Total',
-        data: [820, 932, 901, 934, 1290, 1330, 1320]
-      }
-    ]
-  };
-
-  chart_patent_area.setOption(option_patent_area);
-  //==============================================================
-  var dom_patent_type = document.getElementById('patent_type');
   var chart_patent_type = echarts.init(dom_patent_type, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_patent_type = {
-    animation: false,
-    title: {
-      text: 'Referer of a Website',
-      subtext: 'Fake Data',
-      left: 'center'
-    },
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      orient: 'vertical',
-      left: 'left'
-    },
-    series: [
-      {
-        name: 'Access From',
-        type: 'pie',
-        radius: '50%',
-        data: [
-          { value: 1048, name: 'Search Engine' },
-          { value: 735, name: 'Direct' },
-          { value: 580, name: 'Email' },
-          { value: 484, name: 'Union Ads' },
-          { value: 300, name: 'Video Ads' }
-        ],
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
-        }
-      }
-    ]
-  };
-
-  chart_patent_type.setOption(option_patent_type);
-  //==============================================================
-  //          var dom_aaa = document.getElementById('aaa');
-  //         var chart_aaa = echarts.init(dom_aaa, null, {
-  //             renderer: 'canvas',
-  //             useDirtyRect: false
-  //         });
-  //         var ROOT_PATH = 'https://echarts.apache.org/examples';
-  //     var option_aaa;
-
-  //     chart_aaa.showLoading();
-  // $.get(ROOT_PATH + '/data/asset/data/disk.tree.json', function (diskData) {
-  //   chart_aaa.hideLoading();
-  //   const formatUtil = echarts.format;
-  //   function getLevelOption() {
-  //     return [
-  //       {
-  //         itemStyle: {
-  //           borderWidth: 0,
-  //           gapWidth: 5
-  //         }
-  //       },
-  //       {
-  //         itemStyle: {
-  //           gapWidth: 1
-  //         }
-  //       },
-  //       {
-  //         colorSaturation: [0.35, 0.5],
-  //         itemStyle: {
-  //           gapWidth: 1,
-  //           borderColorSaturation: 0.6
-  //         }
-  //       }
-  //     ];
-  //   }
-  //   chart_aaa.setOption(
-  //     (option_aaa = {
-  //       title: {
-  //         text: 'Disk Usage',
-  //         left: 'center'
-  //       },
-  //       tooltip: {
-  //         formatter: function (info) {
-  //           var value = info.value;
-  //           var treePathInfo = info.treePathInfo;
-  //           var treePath = [];
-  //           for (var i = 1; i < treePathInfo.length; i++) {
-  //             treePath.push(treePathInfo[i].name);
-  //           }
-  //           return [
-  //             '<div class="tooltip-title">' +
-  //               formatUtil.encodeHTML(treePath.join('/')) +
-  //               '</div>',
-  //             'Disk Usage: ' + formatUtil.addCommas(value) + ' KB'
-  //           ].join('');
-  //         }
-  //       },
-  //       series: [
-  //         {
-  //           name: 'Disk Usage',
-  //           type: 'treemap',
-  //           visibleMin: 300,
-  //           label: {
-  //             show: true,
-  //             formatter: '{b}'
-  //           },
-  //           itemStyle: {
-  //             borderColor: '#fff'
-  //           },
-  //           levels: getLevelOption(),
-  //           data: diskData
-  //         }
-  //       ]
-  //     })
-  //   );
-  // });
-
-  //         chart_aaa.setOption(option_aaa);
-  //==============================================================
-  var dom_bbb = document.getElementById('bbb');
-  var chart_bbb = echarts.init(dom_bbb, null, {
+  var chart_patent_technology = echarts.init(dom_patent_technology, null, {
     renderer: 'canvas',
     useDirtyRect: false
   });
 
-  const option_bbb = {
-    animation: false,
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: 'line',
-        smooth: true
+  var chart_patent_concentration = echarts.init(dom_patent_concentration, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+
+  const renderPage = {
+    patent_trend1: function (newValue) {
+      const initChart = (xAxisData, seriesData) => {
+        const option = {
+          xAxis: {
+            type: 'category',
+            data: xAxisData
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              data: seriesData,
+              type: 'bar'
+            }
+          ]
+        };
+
+        chart_patent_trend1.setOption(option);
+
+      };
+
+      function renderPage(res_content, jsonData) {
+        patent_trend1_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          let grouped = {};
+          jsonData.data.forEach(item => {
+            for (let key in item) {
+              if (!grouped[key]) {
+                grouped[key] = [];
+              }
+              grouped[key].push(item[key]);
+            }
+          });
+
+          initChart(grouped.year, grouped.num);
+        }
       }
-    ]
-  };
-  chart_bbb.setOption(option_bbb);
-  //==============================================================
+
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+
+    },
+    patent_trend2: function (newValue) {
+      const initChart = (result) => {
+
+        const option = {
+
+          legend: {
+            data: ['授权', '申请', '授权占比']
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: result.years,
+              axisPointer: {
+                type: 'shadow'
+              }
+            }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              name: '专利数量',
+              // min: 0,
+              // max: 250,
+              interval: 50,
+              axisLabel: {
+                formatter: '{value}'
+              }
+            },
+            {
+              type: 'value',
+              name: '授权占比',
+              // min: 0,
+              // max: 25,
+              interval: 5,
+              axisLabel: {
+                formatter: '{value} %'
+              }
+            }
+          ],
+          series: [
+            {
+              name: '授权',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + ' ml';
+                }
+              },
+              data: result.authorization_nums
+            },
+            {
+              name: '申请',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value;
+                }
+              },
+              data: result.apply_nums
+            },
+            {
+              name: '授权占比',
+              type: 'line',
+              yAxisIndex: 1,
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + ' %';
+                }
+              },
+              data: result.percent,
+            }
+          ]
+        };
+
+        chart_patent_trend2.setOption(option);
+
+      };
+
+      function renderPage(res_content, jsonData) {
+        patent_trend2_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          const data = jsonData.data;
+          const years = data.map(item => item.year);
+          const authorization_nums = data.map(item => item.authorization_num);
+          const apply_nums = data.map(item => item.apply_num);
+          let percent = [];
+          authorization_nums.forEach((num, index) => {
+            let per = 0;
+            if (num >= apply_nums[index]) {
+              per = 0
+            } else {
+              per = ((num / apply_nums[index]) * 100).toFixed(2);
+            }
+
+            percent.push(per)
+          });
+          const result = {
+            years: years,
+            authorization_nums: authorization_nums,
+            apply_nums: apply_nums,
+            percent
+          };
+
+          initChart(result);
+
+        }
+      }
+
+
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+    patent_applicant: function (newValue) {
+      const initChart = (yAxisData, seriesData) => {
+        const option = {
+          // title: {
+          //     text: 'World Population'
+          // },
+          // tooltip: {
+          //     trigger: 'axis',
+          //     axisPointer: {
+          //     type: 'shadow'
+          //     }
+          // },
+          legend: {},
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          xAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01]
+          },
+          yAxis: {
+            type: 'category',
+            data: yAxisData,
+          },
+          series: [
+            {
+              type: 'bar',
+              data: seriesData
+            },
+          ]
+        };
+
+        chart_patent_applicant.setOption(option);
+
+      };
+
+      function renderPage(res_content, jsonData) {
+        patent_applicant_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          let grouped = {};
+          jsonData.data.forEach(item => {
+            for (let key in item) {
+              if (!grouped[key]) {
+                grouped[key] = [];
+              }
+              grouped[key].push(item[key]);
+            }
+          });
+
+          initChart(grouped.applicant, grouped.num);
+        }
+      }
+
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+    patent_area: function (newValue) {
+      const initChart = (series, year) => {
+        const option = {
+          animation: false,
+          title: {
+            text: 'Stacked Line'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          // legend: {
+          //   data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+          // },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: year
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: series
+        };
+
+        chart_patent_area.setOption(option);
+
+
+      };
+
+
+      function renderPage(res_content, jsonData) {
+        patent_area_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          const series = [];
+          jsonData.areas.forEach(item => {
+            series.push({
+              name: item.area,
+              type: 'line',
+              stack: 'Total',
+              data: item.data
+            })
+          });
+
+          initChart(series, jsonData.year);
+        }
+      }
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+    patent_type: function (newValue) {
+
+      const initChart = (seriesData) => {
+        const option = {
+          // title: {
+          //     text: 'Referer of a Website',
+          //     subtext: 'Fake Data',
+          //     left: 'center'
+          // },
+          // tooltip: {
+          //     trigger: 'item'
+          // },
+          // legend: {
+          //     orient: 'vertical',
+          //     left: 'left'
+          // },
+          series: [
+            {
+              name: '专利类型',
+              type: 'pie',
+              radius: '50%',
+              data: seriesData,
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        };
+        chart_patent_type.setOption(option);
+
+
+      };
+
+
+      function renderPage(res_content, jsonData) {
+        patent_type_txt.innerHTML = res_content;
+
+        if (jsonData) {
+
+          // 遍历对象数组并修改字段名
+          jsonData.data = jsonData.data.map(item => {
+            return {
+              name: item.type,
+              value: item.num
+            };
+          });
+
+          initChart(jsonData.data);
+        }
+      }
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+    patent_technology: function (newValue) {
+      const initChart = (formattedData) => {
+        const option = {
+          // title:{
+          //         text:'矩形树',
+          //         left: 'center',     // 设置标题水平居中
+          //         top: 20             // 设置标题距离顶部的距离为20像素
+          //     },
+          //     tooltip: {        //浮窗效果
+          //     },
+          series: [
+            {
+              // name:'11111111',           
+              type: 'treemap',     //图例样式，矩形树
+              levels: [
+                // 第一个层级的配置
+                {
+                  // 设置每个矩形的边框样式
+                  itemStyle: {
+                    borderColor: '#ffffff',  // 边框颜色
+                    borderWidth: 4,       // 边框宽度
+                    gapWidth: 1,          // 矩形之间的间隔宽度
+                  },
+                  // // 设置上方标签的显示方式
+                  // upperLabel: {
+                  //     show: false,  // 是否显示上方标签
+                  // },
+                },
+                // 第二个层级的配置
+                // {
+                //     // 设置每个矩形的边框样式
+                //     itemStyle: {
+                //         borderColor: '#ffffff',  // 边框颜色
+                //         borderWidth: 2,       // 边框宽度
+                //         gapWidth: 1,          // 矩形之间的间隔宽度
+                //     },
+                //     // 设置上方标签的显示方式
+                //     upperLabel: {
+                //         show: false,  // 是否显示上方标签
+                //     },
+                // },
+              ],
+              data: formattedData
+            }
+          ]
+        };
+        chart_patent_technology.setOption(option);
+
+
+      };
+
+
+      function renderPage(res_content, jsonData) {
+        patent_technology_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          const formattedData = jsonData.data.map(item => ({
+            name: item.class + item.num,
+            value: item.num
+          }));
+
+          initChart(formattedData);
+
+        }
+      }
+
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+    patent_concentration: function (newValue) {
+      const initChart = (xAxisData, seriesData) => {
+        const option = {
+          xAxis: {
+            type: 'category',
+            data: xAxisData
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              data: seriesData,
+              type: 'line',
+              smooth: true
+            }
+          ]
+        };
+        chart_patent_concentration.setOption(option);
+
+      };
+
+      function renderPage(res_content, jsonData) {
+        patent_concentration_txt.innerHTML = res_content;
+
+        if (jsonData) {
+          let grouped = {};
+          jsonData.data.forEach(item => {
+            for (let key in item) {
+              if (!grouped[key]) {
+                grouped[key] = [];
+              }
+              grouped[key].push(item[key]);
+            }
+          });
+
+          initChart(grouped.year, grouped.proportion);
+        }
+      }
+
+      const res_content = newValue.content
+      const jsonData = JSON.parse(newValue.data);
+      renderPage(res_content, jsonData)
+    },
+
+  }
+
+  // 获取url参数
+  function getUrlParams() {
+    // 获取完整的url
+    const url = window.location.href;
+
+    // 创建URLSearchParams对象
+    const searchParams = new URLSearchParams(new URL(url).search);
+
+    // 使用get方法获取参数值
+    return Object.fromEntries(searchParams.entries());
+  }
+
+  // const query = getUrlParams();
+  // if (query.id) {
+  //   $.ajax({
+  //     url: 'http://110.42.103.198:22440/v1/report/detail',
+  //     type: 'POST',
+  //     dataType: 'json',
+  //     contentType: 'application/json',
+  //     data: JSON.stringify({ id: parseInt(query.id) }),
+  //     success: function (result) {
+  //       if (result && result.data) {
+  //         result.data.forEach(item => {
+  //           renderPage[item.type](item)
+  //         });
+  //       }
+  //     }
+  //   });
+  // }
+  window.onload = function () {
+    window.data = {{ data | tojson }}
+    const id = window.data.id;
+  if (id) {
+    $.ajax({
+      url: 'http://110.42.103.198:22440/v1/report/detail',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({ id: parseInt(id) }),
+      success: function (result) {
+        if (result && result.data) {
+          result.data.forEach(item => {
+            renderPage[item.type](item)
+          });
+        }
+      }
+    });
+  }
+}
+
 </script>
+
 </html>

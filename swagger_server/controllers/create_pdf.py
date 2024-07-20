@@ -9,7 +9,7 @@ async def html_to_pdf(html_content, output_path):
     browser = await launch(headless=True)
     page = await browser.newPage()
     await page.setContent(html_content)
-    await page.waitForSelector("canvas", {'timeout': 60000})  # 等待 canvas 元素加载完成
+    await page.waitForSelector("canvas", {'timeout': 180000})  # 等待 canvas 元素加载完成
     await page.pdf({'path': output_path, 'width': '1200px'})
     await browser.close()
 
@@ -23,13 +23,15 @@ def generate_pdf_process(html_content, pdf_path, conn):
 
 @createPdf.route('/generate-pdf', methods=['POST'])
 def generate_pdf():
-    data = request.get_json()
-    if not data or 'reportId' not in data:
+    reqdata = request.get_json()
+    if not reqdata or 'reportId' not in reqdata:
         return jsonify({"error": "No reportId provided"}), 400
 
-    reportId = data['reportId']
-    chart_data = data['userId']
-    html_content = render_template('report-detail.html', chart_data=chart_data)
+    reportId = reqdata['reportId']
+    htmlData = {
+        'id': reportId
+    }
+    html_content = render_template('report-detail.html', data=htmlData)
     pdf_path = reportId+".pdf"
 
     parent_conn, child_conn = Pipe()
