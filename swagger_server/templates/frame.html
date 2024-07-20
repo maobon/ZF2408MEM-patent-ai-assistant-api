@@ -645,7 +645,8 @@ window.onload = function () {
     const id = window.data.id;
   if (id) {
     $.ajax({
-      url: 'http://110.42.103.198:22440/v1/report/detail',
+      // url: 'http://110.42.103.198:22440/v1/report/detail',
+      url: 'http://localhost:8080/v1/report/detail',
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
