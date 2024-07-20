@@ -15,7 +15,6 @@ from swagger_server.models.concentration_req import ConcentrationReq
 from swagger_server.models.concentration_res import ConcentrationRes
 from swagger_server.models.concentration_res_data import ConcentrationResData
 from swagger_server.models.delete_req import DeleteReq
-from swagger_server.models.delete_req_ids import DeleteReqIds
 from swagger_server.models.detail_req import DetailReq
 from swagger_server.models.detail_res import DetailRes
 from swagger_server.models.detail_res_data import DetailResData

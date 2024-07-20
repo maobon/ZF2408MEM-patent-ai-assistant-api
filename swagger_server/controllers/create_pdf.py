@@ -1,9 +1,12 @@
-from flask import Flask,Blueprint, request, send_file, render_template, jsonify
-import asyncio,shortuuid
+from flask import Flask, Blueprint, request, send_file, render_template, jsonify
+import asyncio, shortuuid
 from pyppeteer import launch
 from multiprocessing import Process, Pipe
 
+from swagger_server.models.cors.cors import make_cors_response
+
 createPdf = Blueprint('createPdf', __name__)
+
 
 async def html_to_pdf(html_content, output_path):
     browser = await launch(headless=True)
@@ -13,6 +16,7 @@ async def html_to_pdf(html_content, output_path):
     await page.pdf({'path': output_path, 'width': '1200px'})
     await browser.close()
 
+
 def generate_pdf_process(html_content, pdf_path, conn):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -21,16 +25,18 @@ def generate_pdf_process(html_content, pdf_path, conn):
     conn.close()
 
 
-@createPdf.route('/generate-pdf', methods=['POST'])
+@createPdf.route('/generate-pdf', methods=['OPTIONS', 'POST'])
 def generate_pdf():
+    if request.method == 'OPTIONS':
+        return make_cors_response('', 200)
     data = request.get_json()
     if not data or 'reportId' not in data:
-        return jsonify({"error": "No reportId provided"}), 400
+        return make_cors_response(jsonify({"error": "No reportId provided"}), 400)
 
     reportId = data['reportId']
     chart_data = data['userId']
     html_content = render_template('report-detail.html', chart_data=chart_data)
-    pdf_path = reportId+".pdf"
+    pdf_path = reportId + ".pdf"
 
     parent_conn, child_conn = Pipe()
     p = Process(target=generate_pdf_process, args=(html_content, pdf_path, child_conn))
@@ -38,9 +44,10 @@ def generate_pdf():
     p.join()
 
     if parent_conn.recv() == 'done':
-        return send_file(pdf_path, as_attachment=True)
+        return make_cors_response(send_file(pdf_path, as_attachment=True))
     else:
-        return jsonify({"error": "Failed to generate PDF"}), 500
+        return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
+
 
 def generate_short_uuid():
     return shortuuid.ShortUUID().random(length=22)

@@ -6,7 +6,6 @@ from datetime import date, datetime  # noqa: F401
 from typing import List, Dict  # noqa: F401
 
 from swagger_server.models.base_model_ import Model
-from swagger_server.models.delete_req_ids import DeleteReqIds  # noqa: F401,E501
 from swagger_server import util
 
 
@@ -15,14 +14,14 @@ class DeleteReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, ids: DeleteReqIds=None):  # noqa: E501
+    def __init__(self, ids: List[int]=None):  # noqa: E501
         """DeleteReq - a model defined in Swagger
 
         :param ids: The ids of this DeleteReq.  # noqa: E501
-        :type ids: DeleteReqIds
+        :type ids: List[int]
         """
         self.swagger_types = {
-            'ids': DeleteReqIds
+            'ids': List[int]
         }
 
         self.attribute_map = {
@@ -42,22 +41,22 @@ class DeleteReq(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def ids(self) -> DeleteReqIds:
+    def ids(self) -> List[int]:
         """Gets the ids of this DeleteReq.
 
 
         :return: The ids of this DeleteReq.
-        :rtype: DeleteReqIds
+        :rtype: List[int]
         """
         return self._ids
 
     @ids.setter
-    def ids(self, ids: DeleteReqIds):
+    def ids(self, ids: List[int]):
         """Sets the ids of this DeleteReq.
 
 
         :param ids: The ids of this DeleteReq.
-        :type ids: DeleteReqIds
+        :type ids: List[int]
         """
 
         self._ids = ids
