@@ -613,6 +613,5 @@ definitions:
     properties:
       ids:
         type: array
-        properties:
-          id:
-            type: integer
+        items:
+          type: integer

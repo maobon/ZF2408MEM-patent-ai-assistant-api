@@ -605,7 +605,9 @@ components:
       type: object
       properties:
         ids:
-          $ref: '#/components/schemas/DeleteReq_ids'
+          type: array
+          items:
+            type: integer
     Trend1Res_data:
       type: object
       properties:
@@ -743,10 +745,5 @@ components:
         type: type
         content: content
         status: 0
-    DeleteReq_ids:
-      type: object
-      properties:
-        id:
-          type: integer
 x-original-swagger-version: "2.0"
 
