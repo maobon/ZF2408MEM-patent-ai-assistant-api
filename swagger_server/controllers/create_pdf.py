@@ -46,7 +46,7 @@ def generate_pdf():
     p.join()
 
     if parent_conn.recv() == 'done':
-        return send_file(pdf_path, as_attachment=True)
+        return make_cors_response(send_file(pdf_path, as_attachment=True))
     else:
         return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
 
