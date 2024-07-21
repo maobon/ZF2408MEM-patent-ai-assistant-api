@@ -6,16 +6,18 @@ WORKDIR /usr/src/app
 COPY requirements.txt /usr/src/app/
 
 RUN pip3 install --no-cache-dir -r requirements.txt
-# 安装 Chromium 和其他依赖包
-RUN apk update && \
-    apk add --no-cache \
+# 设置环境变量，避免 pyppeteer 下载 Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+# 安装必要的包和依赖
+RUN apk update && apk add --no-cache \
     chromium \
-    chromium-chromedriver \
     nss \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont && \
+    ttf-freefont \
+    wqy-zenhei && \
     rm -rf /var/cache/apk/*
 
 # 设置环境变量

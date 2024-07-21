@@ -5,7 +5,6 @@ from multiprocessing import Process, Pipe
 
 from swagger_server.models.cors.cors import make_cors_response
 import os
-os.environ['PYPPETEER_DOWNLOAD_HOST'] = 'https://npm.taobao.org/mirrors'
 
 createPdf = Blueprint('createPdf', __name__)
 
@@ -55,31 +54,26 @@ def generate_pdf():
 
 
 
-@createPdf.route('/generate-pdf-test', methods=['OPTIONS', 'POST'])
-def generate_pdf_test():
+@createPdf.route('/generate-pdf-get', methods=['OPTIONS', 'POST','GET'])
+def generate_pdf_get():
     if request.method == 'OPTIONS':
         return make_cors_response('', 200)
-    reqdata = request.get_json()
-    if not reqdata or 'reportId' not in reqdata:
+    reportId = request.args.get('reportId', type=str)
+    if not reportId:
         return make_cors_response(jsonify({"error": "No reportId provided"}), 400)
-
-    reportId = reqdata['reportId']
     htmlData = {
         'id': reportId
     }
-    html_content = render_template('test.html', data=htmlData)
+    html_content = render_template('frame.html', data=htmlData)
     pdf_name = reportId+".pdf"
     pdf_path = f'/usr/src/app/{reportId}.pdf'
 
     parent_conn, child_conn = Pipe()
     p = Process(target=generate_pdf_process, args=(html_content, pdf_name, child_conn))
-    '''/usr/src/app/47.pdf'''
     p.start()
     p.join()
 
     if parent_conn.recv() == 'done':
-        '''/usr/src/app/swagger_server/47.pdf'''
-        print(f"pdf_path****: {pdf_path}")
         return make_cors_response(send_file(pdf_path, as_attachment=True))
     else:
         return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
