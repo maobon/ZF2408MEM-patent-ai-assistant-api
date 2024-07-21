@@ -41,10 +41,10 @@ def generate_pdf():
         'id': reportId
     }
     html_content = render_template('frame.html', data=htmlData)
-    pdf_path = reportId+".pdf"
-
+    pdf_name = reportId+".pdf"
+    pdf_path = f'/usr/src/app/{reportId}.pdf'
     parent_conn, child_conn = Pipe()
-    p = Process(target=generate_pdf_process, args=(html_content, pdf_path, child_conn))
+    p = Process(target=generate_pdf_process, args=(html_content, pdf_name, child_conn))
     p.start()
     p.join()
 
@@ -68,14 +68,18 @@ def generate_pdf_test():
         'id': reportId
     }
     html_content = render_template('test.html', data=htmlData)
-    pdf_path = reportId+".pdf"
+    pdf_name = reportId+".pdf"
+    pdf_path = f'/usr/src/app/{reportId}.pdf'
 
     parent_conn, child_conn = Pipe()
-    p = Process(target=generate_pdf_process, args=(html_content, pdf_path, child_conn))
+    p = Process(target=generate_pdf_process, args=(html_content, pdf_name, child_conn))
+    '''/usr/src/app/47.pdf'''
     p.start()
     p.join()
 
     if parent_conn.recv() == 'done':
+        '''/usr/src/app/swagger_server/47.pdf'''
+        print(f"pdf_path****: {pdf_path}")
         return make_cors_response(send_file(pdf_path, as_attachment=True))
     else:
         return make_cors_response(jsonify({"error": "Failed to generate PDF"}), 500)
