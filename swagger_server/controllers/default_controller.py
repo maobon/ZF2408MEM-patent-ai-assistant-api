@@ -1,7 +1,9 @@
 import json
+from datetime import datetime
 
 import connexion
 import six
+from elasticsearch import exceptions
 from flask import jsonify, request, make_response
 from mysql.connector import Error
 
@@ -11,6 +13,7 @@ from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
 from swagger_server.models.area_res import AreaRes  # noqa: E501
 from swagger_server.models.cors.cors import make_cors_response
+from swagger_server.models.es.es import create_es_connection, get_category_id_from_es
 from swagger_server.models.patent_report_req import PatentReportReq  # noqa: E501
 from swagger_server.models.patent_report_res import PatentReportRes  # noqa: E501
 from swagger_server.models.patent_report_detail_req import PatentReportDetailReq  # noqa: E501
@@ -47,7 +50,7 @@ def patent_applicant(body):  # noqa: E501
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: ApplicantRes
@@ -57,45 +60,84 @@ def patent_applicant(body):  # noqa: E501
     body = request.get_json()
     applicant_req = ApplicantReq.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """
-    SELECT applicant_name AS applicant, COUNT(*) AS num
-    FROM biz_patent_0713
-    WHERE meta_class like %s
-    AND application_area_code like %s
-    AND summary like %s
-    AND title like %s
-    GROUP BY applicant_name
-    ORDER BY num DESC limit 5;
-    """
-    like_pattern1 = f"%{applicant_req.industry}%"
-    if applicant_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern2 = f"%{applicant_req.area}%"
-    if applicant_req.area is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{applicant_req.key}%"
-    if applicant_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{applicant_req.theme}%"
-    if applicant_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
-    results = cursor.fetchall()
-    close_connection(connection)
-
-    if results:
-        response = {
-            'data': [{'applicant': row['applicant'], 'num': row['num']} for row in results]
-        }
-        response_json = json.dumps(response, ensure_ascii=False)
-        return make_cors_response(response_json, 200)
+    # 获取分类ID
+    name_pattern = None
+    if applicant_req.industry:
+        name_pattern = f"*{applicant_req.industry}*"
+        category_ids = get_category_id_from_es(es, name_pattern)
     else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+        category_ids = None
+
+    area_pattern = applicant_req.area if applicant_req.area else ""
+    key_pattern = applicant_req.key if applicant_req.key else ""
+    theme_pattern = applicant_req.theme if applicant_req.theme else ""
+
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "multi_match": {
+                            "query": area_pattern,
+                            "fields": ["application_area_code"]
+                        }
+                    },
+                    {
+                        "multi_match": {
+                            "query": key_pattern,
+                            "fields": ["summary.keyword"]
+                        }
+                    },
+                    {
+                        "multi_match": {
+                            "query": theme_pattern,
+                            "fields": ["title.keyword"]
+                        }
+                    }
+                ],
+                "should": [
+                    {
+                        "multi_match": {
+                            "query": category_id,
+                            "fields": ["class_code"]
+                        }
+                    } for category_id in category_ids
+                ],
+                "minimum_should_match": 1 if category_ids else 0
+            }
+        },
+        "aggs": {
+            "top_applicants": {
+                "terms": {
+                    "field": "applicant_name.keyword",
+                    "size": 5,
+                    "order": {
+                        "_count": "desc"
+                    }
+                }
+            }
+        }
+    }
+
+    print(query)
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['top_applicants']['buckets']
+
+        data = [{'applicant': result['key'], 'num': result['doc_count']} for result in results]
+
+        response_json = json.dumps({'data': data}, ensure_ascii=False)
+        return make_cors_response(response_json, 200)
+
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def patent_area_options():  # noqa: E501
@@ -114,7 +156,7 @@ def patent_area(body):  # noqa: E501
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: AreaRes
@@ -226,7 +268,7 @@ def patent_trend1(body):  # noqa: E501
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: Trend1Res
@@ -238,47 +280,66 @@ def patent_trend1(body):  # noqa: E501
     body = request.get_json()
     trend1_req = Trend1Req.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """
-    SELECT YEAR(application_date) AS year, COUNT(*) AS num
-    FROM biz_patent_0713
-    WHERE YEAR(application_date) BETWEEN 2014 AND 2024
-        AND meta_class like %s
-        AND application_area_code like %s
-        AND summary like %s
-        AND title like %s
-    GROUP BY YEAR(application_date)
-    ORDER BY year
-    LIMIT 5;
-    """
-    like_pattern1 = f"%{trend1_req.industry}%"
-    if trend1_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern2 = f"%{trend1_req.area}%"
-    if trend1_req.area is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{trend1_req.key}%"
-    if trend1_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{trend1_req.theme}%"
-    if trend1_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
-    results = cursor.fetchall()
-    close_connection(connection)
+    industry_pattern = f"*{trend1_req.industry}*" if trend1_req.industry else "*"
+    category_ids = get_category_id_from_es(es, industry_pattern)
 
-    if results:
-        response = {
-            'data': [{'year': row['year'], 'num': row['num']} for row in results]
+    if not category_ids:
+        return make_cors_response(jsonify({'message': 'No matching category IDs found'}), 200)
+
+    summary_pattern = f"*{trend1_req.key}*" if trend1_req.key else "*"
+    title_pattern = f"*{trend1_req.theme}*" if trend1_req.theme else "*"
+    area_pattern = f"*{trend1_req.area}*" if trend1_req.area else "*"
+
+    current_year = datetime.now().year
+    start_year = current_year - 10
+
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {"bool": {"should": [{"wildcard": {"class_code": f"*{id}*"}} for id in category_ids]}},
+                    {"wildcard": {"summary.keyword": summary_pattern}},
+                    {"wildcard": {"title.keyword": title_pattern}},
+                    {"wildcard": {"application_area_code": area_pattern}},
+                    {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
+                ]
+            }
+        },
+        "aggs": {
+            "years": {
+                "terms": {
+                    "field": "application_date",
+                    "script": {
+                        "source": "doc['application_date'].value.substring(0, 4)",
+                        "lang": "painless"
+                    },
+                    "size": 10,
+                    "order": {
+                        "_key": "asc"
+                    }
+                }
+            }
         }
-        response_json = json.dumps(response, ensure_ascii=False)
-        return make_cors_response(response_json, 200)
-    else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+    }
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['years']['buckets']
+
+        response_data = {
+            'data': [{'year': int(year['key']), 'num': year['doc_count']} for year in results]
+        }
+
+        return make_cors_response(jsonify(response_data), 200)
+
+    except (exceptions.ConnectionError, exceptions.RequestError) as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def patent_trend2_options():  # noqa: E501
@@ -297,7 +358,7 @@ def patent_trend2(body):  # noqa: E501
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: Trend2Res
@@ -309,64 +370,96 @@ def patent_trend2(body):  # noqa: E501
     body = request.get_json()
     trend2_req = Trend2Req.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """
-    SELECT
-    year,
-    SUM(authorization_num) AS authorization_num,
-    SUM(apply_num) AS apply_num,
-    CASE
-        WHEN SUM(apply_num) = 0 THEN 0
-        ELSE SUM(authorization_num) / NULLIF(SUM(apply_num), 0)
-    END AS proportion
-FROM (
-    SELECT
-        YEAR(application_date) AS year,
-        CASE WHEN legal_status IN ('授权', '有效') THEN 1 ELSE 0 END AS authorization_num,
-        CASE WHEN legal_status NOT IN ('授权', '有效') THEN 1 ELSE 0 END AS apply_num
-    FROM
-        biz_patent_0713
-    WHERE
-        YEAR(application_date) BETWEEN 2014 AND 2024
-      AND meta_class LIKE %s
-      AND application_area_code LIKE %s
-      AND summary LIKE %s
-      AND title LIKE %s
-) AS yearly_data
-GROUP BY
-    year
-ORDER BY
-    year
-LIMIT 5;
-    """
-    like_pattern1 = f"%{trend2_req.industry}%"
-    if trend2_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern2 = f"%{trend2_req.area}%"
-    if trend2_req.area is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{trend2_req.key}%"
-    if trend2_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{trend2_req.theme}%"
-    if trend2_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
-    results = cursor.fetchall()
-    close_connection(connection)
-    if results:
-        response = {
-            'data': [{'year': row['year'], 'authorization_num': row['authorization_num'], 'apply_num': row['apply_num'],
-                      'proportion': row['proportion']} for row in results]
+    industry_pattern = f"*{trend2_req.industry}*" if trend2_req.industry else "*"
+    category_ids = get_category_id_from_es(es, industry_pattern)
+
+    if not category_ids:
+        return make_cors_response(jsonify({'message': 'No matching category IDs found'}), 200)
+
+    summary_pattern = f"*{trend2_req.key}*" if trend2_req.key else "*"
+    title_pattern = f"*{trend2_req.theme}*" if trend2_req.theme else "*"
+    area_pattern = f"*{trend2_req.area}*" if trend2_req.area else "*"
+
+    current_year = datetime.now().year
+    start_year = current_year - 10
+
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {"bool": {"should": [{"wildcard": {"class_code": f"*{id}*"}} for id in category_ids]}},
+                    {"wildcard": {"summary.keyword": summary_pattern}},
+                    {"wildcard": {"title.keyword": title_pattern}},
+                    {"wildcard": {"application_area_code": area_pattern}},
+                    {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
+                ]
+            }
+        },
+        "aggs": {
+            "years": {
+                "terms": {
+                    "script": {
+                        "source": "doc['application_date'].value.substring(0, 4)",
+                        "lang": "painless"
+                    },
+                    "size": 10,
+                    "order": {
+                        "_key": "asc"
+                    }
+                },
+                "aggs": {
+                    "top5": {
+                        "bucket_sort": {
+                            "sort": [
+                                {"_key": {"order": "asc"}}
+                            ],
+                            "size": 5
+                        }
+                    },
+                    "authorization_num": {
+                        "sum": {
+                            "script": {
+                                "source": "doc['legal_status'].value == '授权' || doc['legal_status'].value == '有效' ? 1 : 0",
+                                "lang": "painless"
+                            }
+                        }
+                    },
+                    "apply_num": {
+                        "sum": {
+                            "script": {
+                                "source": "doc['legal_status'].value != '授权' && doc['legal_status'].value != '有效' ? 1 : 0",
+                                "lang": "painless"
+                            }
+                        }
+                    }
+                }
+            }
         }
-        response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
-        return make_cors_response(response_json, 200)
-    else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+    }
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['years']['buckets']
+
+        response_data = {
+            'data': [{'year': int(year['key']),
+                      'authorization_num': year['authorization_num']['value'],
+                      'apply_num': year['apply_num']['value'],
+                      'proportion': (year['authorization_num']['value'] / year['apply_num']['value']) if
+                      year['apply_num']['value'] > 0 else 0}
+                     for year in results]
+        }
+
+        return make_cors_response(jsonify(response_data), 200)
+
+    except (exceptions.ConnectionError, exceptions.RequestError) as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def patent_type_options():  # noqa: E501
@@ -385,7 +478,7 @@ def patent_type(body):  # noqa: E501
 
      # noqa: E501
 
-    :param body: 
+    :param body:
     :type body: dict | bytes
 
     :rtype: TypeRes
@@ -607,121 +700,94 @@ def patent_concentration(body):  # noqa: E501
     body = request.get_json()
     concentration_req = ConcentrationReq.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """
-    WITH RecentYears AS (
-    SELECT
-        applicant_name,
-        YEAR(application_date) AS year,
-        application_area_code,
-        patent_type,
-        COUNT(*) AS total_applications
-    FROM
-        biz_patent_0713
-    WHERE
-        application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
-    AND meta_class like %s
-    AND application_area_code like %s
-    AND summary like %s
-    AND title like %s
-    GROUP BY
-        applicant_name, YEAR(application_date), application_area_code, patent_type
-),
+    industry_pattern = f"*{concentration_req.industry}*" if concentration_req.industry else "*"
+    category_ids = get_category_id_from_es(es, industry_pattern)
 
-     RankedApplicants AS (
-         SELECT
-             applicant_name,
-             year,
-             application_area_code,
-             patent_type,
-             total_applications,
-             RANK() OVER (PARTITION BY year, application_area_code, patent_type ORDER BY total_applications DESC) AS rnk
-         FROM
-             RecentYears
-     ),
+    if not category_ids:
+        return make_cors_response(jsonify({'message': 'No matching category IDs found'}), 200)
 
-     Top10Applicants AS (
-         SELECT
-             year,
-             application_area_code,
-             patent_type,
-             applicant_name,
-             total_applications
-         FROM
-             RankedApplicants
-         WHERE
-             rnk <= 10
-     ),
+    summary_pattern = f"*{concentration_req.key}*" if concentration_req.key else "*"
+    title_pattern = f"*{concentration_req.theme}*" if concentration_req.theme else "*"
+    area_pattern = f"*{concentration_req.area}*" if concentration_req.area else "*"
 
-     TotalApplicationsPerYear AS (
-         SELECT
-             year,
-             application_area_code,
-             patent_type,
-             SUM(total_applications) AS total_applications_per_year
-         FROM
-             RecentYears
-         GROUP BY
-             year, application_area_code, patent_type
-     ),
+    current_year = datetime.now().year
+    start_year = current_year - 10
 
-     Top10TotalApplicationsPerYear AS (
-         SELECT
-             year,
-             application_area_code,
-             patent_type,
-             SUM(total_applications) AS top10_total_applications_per_year
-         FROM
-             Top10Applicants
-         GROUP BY
-             year, application_area_code, patent_type
-     )
-
-SELECT
-    t1.year,
-    SUM(t2.top10_total_applications_per_year) / SUM(t1.total_applications_per_year) * 100 AS proportion
-FROM
-    TotalApplicationsPerYear t1
-        JOIN
-    Top10TotalApplicationsPerYear t2
-    ON
-        t1.year = t2.year
-            AND t1.application_area_code = t2.application_area_code
-            AND t1.patent_type = t2.patent_type
-GROUP BY
-    t1.year
-ORDER BY
-    t1.year
-LIMIT 5;
-    """
-    like_pattern1 = f"%{concentration_req.industry}%"
-    if concentration_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern2 = f"%{concentration_req.area}%"
-    if concentration_req.area is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{concentration_req.key}%"
-    if concentration_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{concentration_req.theme}%"
-    if concentration_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
-    results = cursor.fetchall()
-    close_connection(connection)
-
-    if results:
-        response = {
-            'data': [{'year': row['year'], 'proportion': row['proportion']} for row in results]
+    query = {
+        "size": 0,
+        "query": {
+            "bool": {
+                "filter": [
+                    {"bool": {"should": [{"wildcard": {"class_code": f"*{id}*"}} for id in category_ids]}},
+                    {"wildcard": {"summary.keyword": summary_pattern}},
+                    {"wildcard": {"title.keyword": title_pattern}},
+                    {"wildcard": {"application_area_code": area_pattern}},
+                    {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
+                ]
+            }
+        },
+        "aggs": {
+            "years": {
+                "terms": {
+                    "script": {
+                        "source": "doc['application_date'].value.substring(0, 4)",
+                        "lang": "painless"
+                    },
+                    "size": 5,
+                    "order": {
+                        "_key": "desc"
+                    }
+                },
+                "aggs": {
+                    "top_applicants": {
+                        "terms": {
+                            "field": "applicant_name.keyword",
+                            "size": 10,
+                            "order": {
+                                "_count": "desc"
+                            }
+                        },
+                        "aggs": {
+                            "total_applications": {
+                                "value_count": {
+                                    "field": "applicant_name.keyword"
+                                }
+                            }
+                        }
+                    },
+                    "total_applications_per_year": {
+                        "value_count": {
+                            "field": "applicant_name.keyword"
+                        }
+                    }
+                }
+            }
         }
-        response_json = json.dumps(response, ensure_ascii=False, cls=DecimalEncoder)
-        return make_cors_response(response_json, 200)
-    else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+    }
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['years']['buckets']
+
+        response_data = {
+            'data': []
+        }
+
+        for year in results:
+            top10_total = sum(applicant['doc_count'] for applicant in year['top_applicants']['buckets'])
+            total_applications = year['total_applications_per_year']['value']
+            proportion = (top10_total / total_applications) * 100 if total_applications > 0 else 0
+            response_data['data'].append({'year': int(year['key']), 'proportion': proportion})
+
+        return make_cors_response(jsonify(response_data), 200)
+
+    except (exceptions.ConnectionError, exceptions.RequestError) as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def patent_technology_options():  # noqa: E501
@@ -906,7 +972,8 @@ def report_list(body):  # noqa: E501
     if results:
         response = {
             'data': [{'id': row['id'], 'title': row['title'], 'status': row['status'], "is_deleted": row['is_deleted'],
-                      'batch_id': row['batch_id'], 'update_time': row['modified_time'].strftime('%Y-%m-%d %H:%M:%S')} for row in results]
+                      'batch_id': row['batch_id'], 'update_time': row['modified_time'].strftime('%Y-%m-%d %H:%M:%S')}
+                     for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
         return make_cors_response(response_json, 200)
