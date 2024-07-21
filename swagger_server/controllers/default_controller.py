@@ -897,7 +897,7 @@ def report_list(body):  # noqa: E501
         return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
-    query = """select * from biz_patent_report where user_id = %s;"""
+    query = """select * from biz_patent_report where user_id = %s ORDER BY modified_time DESC;"""
 
     cursor.execute(query, (list_req.user_id,))
     results = cursor.fetchall()
@@ -906,7 +906,7 @@ def report_list(body):  # noqa: E501
     if results:
         response = {
             'data': [{'id': row['id'], 'title': row['title'], 'status': row['status'], "is_deleted": row['is_deleted'],
-                      'batch_id': row['batch_id'], 'update_time': row['modified_time'].isoformat()} for row in results]
+                      'batch_id': row['batch_id'], 'update_time': row['modified_time'].strftime('%Y-%m-%d %H:%M:%S')} for row in results]
         }
         response_json = json.dumps(response, ensure_ascii=False)
         return make_cors_response(response_json, 200)
