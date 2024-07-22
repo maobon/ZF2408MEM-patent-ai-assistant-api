@@ -166,89 +166,151 @@ def patent_area(body):  # noqa: E501
     body = request.get_json()
     area_req = AreaReq.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    # 获取前5个地域
-    top_areas_query = """
-       SELECT application_area_code AS area
-       FROM biz_patent_0713
-       WHERE 
-           YEAR(application_date) BETWEEN 2014 AND 2024
-           AND meta_class LIKE %s
-           AND summary LIKE %s
-           AND title LIKE %s
-       GROUP BY application_area_code
-       ORDER BY COUNT(*) DESC
-       LIMIT 5;
-       """
+    meta_class_pattern = f"*{area_req.industry}*" if area_req.industry else "*"
+    category_ids = get_category_id_from_es(es, meta_class_pattern) if area_req.industry else []
 
-    meta_class_pattern = f"%{area_req.industry}%" if area_req.industry else "%"
-    summary_pattern = f"%{area_req.key}%" if area_req.key else "%"
-    title_pattern = f"%{area_req.theme}%" if area_req.theme else "%"
+    summary_pattern = f"*{area_req.key}*" if area_req.key else "*"
+    title_pattern = f"*{area_req.theme}*" if area_req.theme else "*"
 
-    cursor.execute(top_areas_query, (meta_class_pattern, summary_pattern, title_pattern))
-    top_areas = cursor.fetchall()
-    top_areas_list = [area['area'] for area in top_areas]
+    must_clauses = []
+    should_clauses = []
 
-    if len(top_areas_list) < 5:
-        top_areas_list.extend([''] * (5 - len(top_areas_list)))  # 确保有5个元素
+    if category_ids:
+        should_clauses = [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]
 
-    # 获取这些地域的每年数据
-    query = """
-       SELECT 
-           application_area_code AS area, 
-           YEAR(application_date) AS year, 
-           COUNT(*) AS num
-       FROM 
-           biz_patent_0713
-       WHERE 
-           YEAR(application_date) BETWEEN 2014 AND 2024
-           AND meta_class LIKE %s
-           AND summary LIKE %s
-           AND title LIKE %s
-           AND application_area_code IN (%s, %s, %s, %s, %s)
-       GROUP BY 
-           application_area_code, YEAR(application_date)
-       ORDER BY 
-           application_area_code, YEAR(application_date);
-       """
+    if area_req.key:
+        must_clauses.append({"match": {"summary.keyword": summary_pattern}})
+    if area_req.theme:
+        must_clauses.append({"match": {"title.keyword": title_pattern}})
 
-    cursor.execute(query, (meta_class_pattern, summary_pattern, title_pattern, *top_areas_list))
-    results = cursor.fetchall()
-    close_connection(connection)
-
-    # 初始化年份和区域数据结构
-    years = [2017, 2018, 2019, 2020, 2021]
-    areas_dict = {year: {} for year in years}
-
-    for result in results:
-        year = result['year']
-        area = result['area']
-        num = result['num']
-        if year in areas_dict:
-            areas_dict[year][area] = num
-
-    # 构建返回结构
-    response_data = {
-        'year': years,
-        'areas': []
-    }
-
-    # 通过所有可能的区域来填充数据
-    all_areas = set(area for year_data in areas_dict.values() for area in year_data.keys())
-
-    for area in all_areas:
-        area_data = {
-            'area': area,
-            'data': [areas_dict[year].get(area, 0) for year in years]
+    if not must_clauses and not should_clauses:
+        query = {
+            "size": 0,
+            "query": {
+                "match_all": {}
+            },
+            "aggs": {
+                "top_areas": {
+                    "terms": {
+                        "field": "application_area_code",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
         }
-        response_data['areas'].append(area_data)
+    else:
+        query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "must": must_clauses,
+                    "should": should_clauses,
+                    "minimum_should_match": 1 if should_clauses else 0
+                }
+            },
+            "aggs": {
+                "top_areas": {
+                    "terms": {
+                        "field": "application_area_code",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
+        }
+    print(query)
+    try:
+        response = es.search(index="patent2", body=query)
+        top_areas = response['aggregations']['top_areas']['buckets']
+        top_areas_list = [area['key'] for area in top_areas]
 
-    return make_cors_response(jsonify(response_data), 200)
+        if len(top_areas_list) < 5:
+            top_areas_list.extend([''] * (5 - len(top_areas_list)))  # 确保有5个元素
 
+        # 获取这些地域的每年数据
+        yearly_filter = [{"terms": {"application_area_code": top_areas_list}},
+                         {"range": {"application_date": {"gte": "2014", "lte": "2024"}}}]
+        if category_ids:
+            yearly_filter.append({"bool": {"should": [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]}})
+        if area_req.key:
+            yearly_filter.append({"match": {"summary": summary_pattern}})
+        if area_req.theme:
+            yearly_filter.append({"match": {"title": title_pattern}})
+
+        # 获取这些地域的每年数据
+        yearly_query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "filter": yearly_filter
+                }
+            },
+            "aggs": {
+                "areas": {
+                    "terms": {
+                        "field": "application_area_code",
+                        "size": 5
+                    },
+                    "aggs": {
+                        "years": {
+                            "terms": {
+                                "script": {
+                                    "source": "doc['application_date'].value.substring(0, 4)",
+                                    "lang": "painless"
+                                },
+                                "size": 10,
+                                "order": {
+                                    "_key": "asc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        print(yearly_query)
+
+        response = es.search(index="patent2", body=yearly_query)
+        areas = response['aggregations']['areas']['buckets']
+
+        # 初始化年份和区域数据结构
+        years = [2017, 2018, 2019, 2020, 2021]
+        areas_dict = {year: {} for year in years}
+
+        for area in areas:
+            area_key = area['key']
+            for year in area['years']['buckets']:
+                year_key = int(year['key'])
+                if year_key in areas_dict:
+                    areas_dict[year_key][area_key] = year['doc_count']
+
+        # 构建返回结构
+        response_data = {
+            'year': years,
+            'areas': []
+        }
+
+        # 通过所有可能的区域来填充数据
+        all_areas = set(area for year_data in areas_dict.values() for area in year_data.keys())
+
+        for area in all_areas:
+            area_data = {
+                'area': area,
+                'data': [areas_dict[year].get(area, 0) for year in years]
+            }
+            response_data['areas'].append(area_data)
+
+        return make_cors_response(jsonify(response_data), 200)
+
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 def patent_trend1_options():  # noqa: E501
     """CORS support for 专利趋势1
