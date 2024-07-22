@@ -32,6 +32,7 @@ from swagger_server.models.type_req import TypeReq  # noqa: E501
 from swagger_server.models.type_res import TypeRes  # noqa: E501
 from swagger_server import util
 from swagger_server import date_util
+from swagger_server import title_util
 
 
 def patent_applicant_options():  # noqa: E501
@@ -664,12 +665,15 @@ def patent_report_save(body):  # noqa: E501
     cursor = connection.cursor(dictionary=True)
 
     user_id = patent_report_req.user_id
-    title = patent_report_req.title
-    batch_id = patent_report_req.batch_id
+    key = patent_report_req.key
+    industry = patent_report_req.industry
+    area = patent_report_req.area
+    applicant = patent_report_req.applicant
+    title = title_util.generate_report_title(key, industry, area, applicant)
 
     # 数据准备
     data = [
-        (user_id, title, date_util.getNowDateTime(), date_util.getNowDateTime(), 1, 0, batch_id)
+        (user_id, title, date_util.getNowDateTime(), date_util.getNowDateTime(), 1, 0, '')
     ]
 
     # SQL语句
@@ -694,7 +698,7 @@ def patent_report_save(body):  # noqa: E501
 
     if inserted_id:
         response = {
-            'data': {'id': inserted_id}
+            'data': {'id': inserted_id, 'title': title}
         }
         response_json = json.dumps(response, ensure_ascii=False)
         return make_cors_response(response_json, 200)

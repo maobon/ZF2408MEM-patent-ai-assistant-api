@@ -469,9 +469,13 @@ definitions:
     properties:
       user_id:
         type: string
-      title:
+      key:
         type: string
-      batch_id:
+      industry:
+        type: string
+      area:
+        type: string
+      applicant:
         type: string
   PatentReportRes:
     type: object
@@ -481,11 +485,14 @@ definitions:
     example:
       data:
         id: 0
+        title: 报告标题
   PatentReportRes_data:
     type: object
     properties:
       id:
         type: integer
+      title:
+        type: string
     example:
       id: 0
   PatentReportDetailReq:

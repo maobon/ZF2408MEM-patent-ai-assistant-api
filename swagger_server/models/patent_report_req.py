@@ -14,30 +14,40 @@ class PatentReportReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, user_id: str=None, title: str=None, batch_id: str=None):  # noqa: E501
+    def __init__(self, user_id: str=None, key: str=None, industry: str=None, area: str=None, applicant: str=None):  # noqa: E501
         """PatentReportReq - a model defined in Swagger
 
         :param user_id: The user_id of this PatentReportReq.  # noqa: E501
         :type user_id: str
-        :param title: The title of this PatentReportReq.  # noqa: E501
-        :type title: str
-        :param batch_id: The batch_id of this PatentReportReq.  # noqa: E501
-        :type batch_id: str
+        :param key: The key of this PatentReportReq.  # noqa: E501
+        :type key: str
+        :param industry: The industry of this PatentReportReq.  # noqa: E501
+        :type industry: str
+        :param area: The area of this PatentReportReq.  # noqa: E501
+        :type area: str
+        :param applicant: The applicant of this PatentReportReq.  # noqa: E501
+        :type applicant: str
         """
         self.swagger_types = {
             'user_id': str,
-            'title': str,
-            'batch_id': str
+            'key': str,
+            'industry': str,
+            'area': str,
+            'applicant': str
         }
 
         self.attribute_map = {
             'user_id': 'user_id',
-            'title': 'title',
-            'batch_id': 'batch_id'
+            'key': 'key',
+            'industry': 'industry',
+            'area': 'area',
+            'applicant': 'applicant'
         }
         self._user_id = user_id
-        self._title = title
-        self._batch_id = batch_id
+        self._key = key
+        self._industry = industry
+        self._area = area
+        self._applicant = applicant
 
     @classmethod
     def from_dict(cls, dikt) -> 'PatentReportReq':
@@ -72,43 +82,85 @@ class PatentReportReq(Model):
         self._user_id = user_id
 
     @property
-    def title(self) -> str:
-        """Gets the title of this PatentReportReq.
+    def key(self) -> str:
+        """Gets the key of this PatentReportReq.
 
 
-        :return: The title of this PatentReportReq.
+        :return: The key of this PatentReportReq.
         :rtype: str
         """
-        return self._title
+        return self._key
 
-    @title.setter
-    def title(self, title: str):
-        """Sets the title of this PatentReportReq.
+    @key.setter
+    def key(self, key: str):
+        """Sets the key of this PatentReportReq.
 
 
-        :param title: The title of this PatentReportReq.
-        :type title: str
+        :param key: The key of this PatentReportReq.
+        :type key: str
         """
 
-        self._title = title
+        self._key = key
 
     @property
-    def batch_id(self) -> str:
-        """Gets the batch_id of this PatentReportReq.
+    def industry(self) -> str:
+        """Gets the industry of this PatentReportReq.
 
 
-        :return: The batch_id of this PatentReportReq.
+        :return: The industry of this PatentReportReq.
         :rtype: str
         """
-        return self._batch_id
+        return self._industry
 
-    @batch_id.setter
-    def batch_id(self, batch_id: str):
-        """Sets the batch_id of this PatentReportReq.
+    @industry.setter
+    def industry(self, industry: str):
+        """Sets the industry of this PatentReportReq.
 
 
-        :param batch_id: The batch_id of this PatentReportReq.
-        :type batch_id: str
+        :param industry: The industry of this PatentReportReq.
+        :type industry: str
         """
 
-        self._batch_id = batch_id
+        self._industry = industry
+
+    @property
+    def area(self) -> str:
+        """Gets the area of this PatentReportReq.
+
+
+        :return: The area of this PatentReportReq.
+        :rtype: str
+        """
+        return self._area
+
+    @area.setter
+    def area(self, area: str):
+        """Sets the area of this PatentReportReq.
+
+
+        :param area: The area of this PatentReportReq.
+        :type area: str
+        """
+
+        self._area = area
+
+    @property
+    def applicant(self) -> str:
+        """Gets the applicant of this PatentReportReq.
+
+
+        :return: The applicant of this PatentReportReq.
+        :rtype: str
+        """
+        return self._applicant
+
+    @applicant.setter
+    def applicant(self, applicant: str):
+        """Sets the applicant of this PatentReportReq.
+
+
+        :param applicant: The applicant of this PatentReportReq.
+        :type applicant: str
+        """
+
+        self._applicant = applicant

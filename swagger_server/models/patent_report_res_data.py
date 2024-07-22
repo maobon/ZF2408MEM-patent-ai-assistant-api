@@ -14,20 +14,25 @@ class PatentReportResData(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, id: int=None):  # noqa: E501
+    def __init__(self, id: int=None, title: str=None):  # noqa: E501
         """PatentReportResData - a model defined in Swagger
 
         :param id: The id of this PatentReportResData.  # noqa: E501
         :type id: int
+        :param title: The title of this PatentReportResData.  # noqa: E501
+        :type title: str
         """
         self.swagger_types = {
-            'id': int
+            'id': int,
+            'title': str
         }
 
         self.attribute_map = {
-            'id': 'id'
+            'id': 'id',
+            'title': 'title'
         }
         self._id = id
+        self._title = title
 
     @classmethod
     def from_dict(cls, dikt) -> 'PatentReportResData':
@@ -60,3 +65,24 @@ class PatentReportResData(Model):
         """
 
         self._id = id
+
+    @property
+    def title(self) -> str:
+        """Gets the title of this PatentReportResData.
+
+
+        :return: The title of this PatentReportResData.
+        :rtype: str
+        """
+        return self._title
+
+    @title.setter
+    def title(self, title: str):
+        """Sets the title of this PatentReportResData.
+
+
+        :param title: The title of this PatentReportResData.
+        :type title: str
+        """
+
+        self._title = title
