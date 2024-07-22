@@ -551,34 +551,81 @@ def patent_type(body):  # noqa: E501
     body = request.get_json()
     type_req = TypeReq.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """SELECT patent_type, COUNT(*) as num FROM biz_patent_0713 WHERE meta_class like %s and summary like %s and
-             title like %s GROUP BY patent_type LIMIT 5;"""
-    like_pattern = f"%{type_req.industry}%"
-    if type_req.industry is None:
-        like_pattern = f"%%"
-    like_pattern2 = f"%{type_req.key}%"
-    if type_req.key is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{type_req.theme}%"
-    if type_req.theme is None:
-        like_pattern3 = f"%%"
-    cursor.execute(query, (like_pattern, like_pattern2, like_pattern3))
-    results = cursor.fetchall()
-    close_connection(connection)
+    # 获取分类ID
+    industry_pattern = f"*{type_req.industry}*" if type_req.industry else "*"
+    category_ids = get_category_id_from_es(es, industry_pattern) if type_req.industry else []
 
-    if results:
-        response = {
-            'data': [{'type': row['patent_type'], 'num': row['num']} for row in results]
+    summary_pattern = f"*{type_req.key}*" if type_req.key else "*"
+    title_pattern = f"*{type_req.theme}*" if type_req.theme else "*"
+
+    must_clauses = []
+    should_clauses = []
+
+    if category_ids:
+        should_clauses = [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]
+
+    if type_req.key:
+        must_clauses.append({"wildcard": {"summary.keyword": summary_pattern}})
+    if type_req.theme:
+        must_clauses.append({"wildcard": {"title.keyword": title_pattern}})
+
+    if not must_clauses and not should_clauses:
+        # 如果没有传入任何参数，进行全匹配查询
+        query = {
+            "size": 0,
+            "query": {
+                "match_all": {}
+            },
+            "aggs": {
+                "patent_types": {
+                    "terms": {
+                        "field": "patent_type",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
         }
-        response_json = json.dumps(response, ensure_ascii=False)
-        return make_cors_response(response_json, 200)
     else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+        query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "must": must_clauses,
+                    "should": should_clauses,
+                    "minimum_should_match": 1 if should_clauses else 0
+                }
+            },
+            "aggs": {
+                "patent_types": {
+                    "terms": {
+                        "field": "patent_type",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
+        }
+
+    print(query)
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['patent_types']['buckets']
+
+        response_data = {
+            'data': [{'type': result['key'], 'num': result['doc_count']} for result in results]
+        }
+
+        return make_cors_response(jsonify(response_data), 200)
+
+    except (exceptions.ConnectionError, exceptions.RequestError) as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def patent_report_save_options():  # noqa: E501
