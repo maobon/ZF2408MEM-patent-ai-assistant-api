@@ -28,7 +28,7 @@ def main():
     # 定义非 Swagger 的蓝图
     flask_app.register_blueprint(createPdf)
 
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=22440)
 
 
 def _build_cors_preflight_response():

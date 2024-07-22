@@ -65,64 +65,62 @@ def patent_applicant(body):  # noqa: E501
         return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
     # 获取分类ID
-    name_pattern = None
-    if applicant_req.industry:
-        name_pattern = f"*{applicant_req.industry}*"
-        category_ids = get_category_id_from_es(es, name_pattern)
-    else:
-        category_ids = None
+    name_pattern = f"*{applicant_req.industry}*" if applicant_req.industry else "*"
+    category_ids = get_category_id_from_es(es, name_pattern) if applicant_req.industry else []
 
-    area_pattern = applicant_req.area if applicant_req.area else ""
-    key_pattern = applicant_req.key if applicant_req.key else ""
-    theme_pattern = applicant_req.theme if applicant_req.theme else ""
+    area_pattern = f"*{applicant_req.area}*" if applicant_req.area else "*"
+    key_pattern = f"*{applicant_req.key}*" if applicant_req.key else "*"
+    theme_pattern = f"*{applicant_req.theme}*" if applicant_req.theme else "*"
 
-    query = {
-        "size": 0,
-        "query": {
-            "bool": {
-                "must": [
-                    {
-                        "multi_match": {
-                            "query": area_pattern,
-                            "fields": ["application_area_code"]
-                        }
-                    },
-                    {
-                        "multi_match": {
-                            "query": key_pattern,
-                            "fields": ["summary.keyword"]
-                        }
-                    },
-                    {
-                        "multi_match": {
-                            "query": theme_pattern,
-                            "fields": ["title.keyword"]
-                        }
-                    }
-                ],
-                "should": [
-                    {
-                        "multi_match": {
-                            "query": category_id,
-                            "fields": ["class_code"]
-                        }
-                    } for category_id in category_ids
-                ],
-                "minimum_should_match": 1 if category_ids else 0
-            }
-        },
-        "aggs": {
-            "top_applicants": {
-                "terms": {
-                    "field": "applicant_name.keyword",
-                    "size": 5,
-                    "order": {
-                        "_count": "desc"
+    must_clauses = []
+    should_clauses = []
+
+    if category_ids:
+        should_clauses = [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]
+
+    if applicant_req.area:
+        must_clauses.append({"wildcard": {"application_area_code": area_pattern}})
+    if applicant_req.key:
+        must_clauses.append({"wildcard": {"summary.keyword": key_pattern}})
+    if applicant_req.theme:
+        must_clauses.append({"wildcard": {"title.keyword": theme_pattern}})
+
+    if not must_clauses and not should_clauses:
+        query = {
+            "size": 0,
+            "query": {
+                "match_all": {}
+            },
+            "aggs": {
+                "top_applicants": {
+                    "terms": {
+                        "field": "applicant_name.keyword",
+                        "size": 5,
+                        "order": {"_count": "desc"}
                     }
                 }
             }
         }
-    }
+    else:
+        query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "must": must_clauses,
+                    "should": should_clauses,
+                    "minimum_should_match": 1 if should_clauses else 0
+                }
+            },
+            "aggs": {
+                "top_applicants": {
+                    "terms": {
+                        "field": "applicant_name.keyword",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
+        }
 
     print(query)
 

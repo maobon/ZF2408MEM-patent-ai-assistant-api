@@ -40,6 +40,8 @@ def get_all_category_ids_from_es(es):
 
 
 def get_category_id_from_es(es, name):
+    if name is None:
+        return []
     query = {
         "query": {
             "wildcard": {
