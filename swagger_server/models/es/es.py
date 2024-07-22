@@ -57,32 +57,15 @@ def get_category_id_from_es(es, name):
     return category_ids
 
 
-def get_top_areas(es, category_ids, summary_pattern, title_pattern):
+def get_category_id_from_es_name(es, industry_pattern):
     query = {
-        "size": 0,
+        "size": 1000,
         "query": {
-            "bool": {
-                "filter": [
-                    {"bool": {"should": [{"wildcard": {"class_code": f"*{id}*"}} for id in category_ids]}},
-                    {"wildcard": {"summary.keyword": summary_pattern}},
-                    {"wildcard": {"title.keyword": title_pattern}}
-                ]
-            }
-        },
-        "aggs": {
-            "top_areas": {
-                "terms": {
-                    "field": "application_area_code",
-                    "size": 5,
-                    "order": {"_count": "desc"}
-                }
+            "wildcard": {
+                "name.keyword": industry_pattern
             }
         }
     }
-    try:
-        response = es.search(index="your_index_name", body=query)
-        top_areas = response['aggregations']['top_areas']['buckets']
-        return [area['key'] for area in top_areas]
-    except Exception as e:
-        print(f"Error fetching top areas: {e}")
-        return []
+    response = es.search(index="biz_category_index", body=query)
+    return [{'category_id': hit['_source']['category_id'], 'name': hit['_source']['name']} for hit in
+            response['hits']['hits']]

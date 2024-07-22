@@ -13,7 +13,7 @@ from swagger_server.models.applicant_res import ApplicantRes  # noqa: E501
 from swagger_server.models.area_req import AreaReq  # noqa: E501
 from swagger_server.models.area_res import AreaRes  # noqa: E501
 from swagger_server.models.cors.cors import make_cors_response
-from swagger_server.models.es.es import create_es_connection, get_category_id_from_es
+from swagger_server.models.es.es import create_es_connection, get_category_id_from_es, get_category_id_from_es_name
 from swagger_server.models.patent_report_req import PatentReportReq  # noqa: E501
 from swagger_server.models.patent_report_res import PatentReportRes  # noqa: E501
 from swagger_server.models.patent_report_detail_req import PatentReportDetailReq  # noqa: E501
@@ -926,58 +926,95 @@ def patent_technology(body):  # noqa: E501
     body = request.get_json()
     technology_req = TechnologyReq.from_dict(body)
 
-    connection = create_connection()
-    if connection is None:
-        return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
+    es = create_es_connection()
+    if es is None:
+        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
 
-    cursor = connection.cursor(dictionary=True)
-    query = """  
-SELECT
-    meta_class as class,
-    total_applications as num
-FROM (
-         SELECT
-             meta_class,
-             COUNT(*) AS total_applications
-         FROM
-             biz_patent_0713
-         WHERE
-             application_date >= DATE_SUB(CURDATE(), INTERVAL 10 YEAR)
-           AND meta_class LIKE %s
-           AND application_area_code LIKE %s
-           AND summary like %s
-           AND title like %s
-         GROUP BY
-             meta_class
-     ) AS RecentYears
-ORDER BY
-    total_applications DESC
-LIMIT 5;
-    """
-    like_pattern1 = f"%{technology_req.industry}%"
-    if technology_req.industry is None:
-        like_pattern1 = f"%%"
-    like_pattern2 = f"%{technology_req.area}%"
-    if technology_req.area is None:
-        like_pattern2 = f"%%"
-    like_pattern3 = f"%{technology_req.key}%"
-    if technology_req.key is None:
-        like_pattern3 = f"%%"
-    like_pattern4 = f"%{technology_req.theme}%"
-    if technology_req.theme is None:
-        like_pattern4 = f"%%"
-    cursor.execute(query, (like_pattern1, like_pattern2, like_pattern3, like_pattern4))
-    results = cursor.fetchall()
-    close_connection(connection)
+    industry_pattern = f"*{technology_req.industry}*" if technology_req.industry else "*"
+    category_results = get_category_id_from_es_name(es, industry_pattern) if technology_req.industry else []
+    category_ids = [result['category_id'] for result in category_results]
+    category_name_map = {result['category_id']: result['name'] for result in category_results}
 
-    if results:
-        response = {
-            'data': [{'class': row['class'], 'num': row['num']} for row in results]
+    area_pattern = f"*{technology_req.area}*" if technology_req.area else "*"
+    key_pattern = f"*{technology_req.key}*" if technology_req.key else "*"
+    theme_pattern = f"*{technology_req.theme}*" if technology_req.theme else "*"
+
+    must_clauses = []
+    should_clauses = []
+
+    if category_ids:
+        should_clauses = [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]
+
+    if technology_req.area:
+        must_clauses.append({"wildcard": {"application_area_code": area_pattern}})
+    if technology_req.key:
+        must_clauses.append({"wildcard": {"summary.keyword": key_pattern}})
+    if technology_req.theme:
+        must_clauses.append({"wildcard": {"title.keyword": theme_pattern}})
+
+    if not must_clauses and not should_clauses:
+        query = {
+            "size": 0,
+            "query": {
+                "match_all": {}
+            },
+            "aggs": {
+                "class_codes": {
+                    "terms": {
+                        "field": "class_code",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
         }
-        response_json = json.dumps(response, ensure_ascii=False)
-        return make_cors_response(response_json, 200)
     else:
-        return make_cors_response(jsonify({'message': 'No data found'}), 200)
+        query = {
+            "size": 0,
+            "query": {
+                "bool": {
+                    "must": must_clauses,
+                    "should": should_clauses,
+                    "minimum_should_match": 1 if should_clauses else 0
+                }
+            },
+            "aggs": {
+                "class_codes": {
+                    "terms": {
+                        "field": "class_code",
+                        "size": 5,
+                        "order": {"_count": "desc"}
+                    }
+                }
+            }
+        }
+
+    print(query)
+
+    try:
+        response = es.search(index="patent2", body=query)
+        results = response['aggregations']['class_codes']['buckets']
+
+        # 按class_code推导出name，并且只返回name和num
+        name_count_map = {}
+        for result in results:
+            for category_id in category_ids:
+                if category_id in result['key']:
+                    name = category_name_map[category_id]
+                    if name in name_count_map:
+                        name_count_map[name] += result['doc_count']
+                    else:
+                        name_count_map[name] = result['doc_count']
+                    break
+
+        data = [{'name': name, 'num': count} for name, count in name_count_map.items()]
+
+        response_json = json.dumps({'data': data}, ensure_ascii=False)
+        return make_cors_response(response_json, 200)
+
+    except (exceptions.ConnectionError, exceptions.RequestError) as e:
+        print(f"Error executing query: {e}")
+        return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
 
 def report_detail_options():  # noqa: E501
