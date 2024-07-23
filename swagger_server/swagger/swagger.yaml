@@ -369,8 +369,6 @@ components:
           type: string
         key:
           type: string
-        theme:
-          type: string
     Trend1Res:
       type: object
       properties:
@@ -390,8 +388,6 @@ components:
         applicant:
           type: string
         key:
-          type: string
-        theme:
           type: string
     Trend2Res:
       type: object
@@ -415,8 +411,6 @@ components:
           type: string
         key:
           type: string
-        theme:
-          type: string
     ApplicantRes:
       type: object
       properties:
@@ -434,8 +428,6 @@ components:
         applicant:
           type: string
         key:
-          type: string
-        theme:
           type: string
     AreaRes:
       type: object
@@ -459,8 +451,6 @@ components:
         applicant:
           type: string
         key:
-          type: string
-        theme:
           type: string
     TypeRes:
       type: object
@@ -539,8 +529,6 @@ components:
           type: string
         key:
           type: string
-        theme:
-          type: string
     TechnologyRes:
       type: object
       properties:
@@ -560,8 +548,6 @@ components:
         applicant:
           type: string
         key:
-          type: string
-        theme:
           type: string
     ConcentrationRes:
       type: object
