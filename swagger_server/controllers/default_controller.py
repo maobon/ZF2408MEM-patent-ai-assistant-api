@@ -176,6 +176,7 @@ def patent_area(body):  # noqa: E501
 
     summary_pattern = f"*{area_req.key}*" if area_req.key else "*"
     title_pattern = f"*{area_req.theme}*" if area_req.theme else "*"
+    applicant_pattern = f"*{area_req.applicant}*" if area_req.applicant else "*"
 
     must_clauses = []
     should_clauses = []
@@ -187,6 +188,8 @@ def patent_area(body):  # noqa: E501
         must_clauses.append({"match": {"summary.keyword": summary_pattern}})
     if area_req.theme:
         must_clauses.append({"match": {"title.keyword": title_pattern}})
+    if area_req.applicant:
+        must_clauses.append({"match": {"applicant_name.keyword": applicant_pattern}})
 
     if not must_clauses and not should_clauses:
         query = {
@@ -237,11 +240,14 @@ def patent_area(body):  # noqa: E501
         yearly_filter = [{"terms": {"application_area_code": top_areas_list}},
                          {"range": {"application_date": {"gte": "2014", "lte": "2024"}}}]
         if category_ids:
-            yearly_filter.append({"bool": {"should": [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]}})
+            yearly_filter.append({"bool": {
+                "should": [{"wildcard": {"class_code": f"*{category_id}*"}} for category_id in category_ids]}})
         if area_req.key:
             yearly_filter.append({"match": {"summary": summary_pattern}})
         if area_req.theme:
             yearly_filter.append({"match": {"title": title_pattern}})
+        if area_req.applicant:
+            yearly_filter.append({"match": {"applicant_name": applicant_pattern}})
 
         # 获取这些地域的每年数据
         yearly_query = {
@@ -313,6 +319,7 @@ def patent_area(body):  # noqa: E501
         print(f"Error executing query: {e}")
         return make_cors_response(jsonify({'message': 'Error executing query'}), 500)
 
+
 def patent_trend1_options():  # noqa: E501
     """CORS support for 专利趋势1
 
@@ -354,6 +361,7 @@ def patent_trend1(body):  # noqa: E501
     summary_pattern = f"*{trend1_req.key}*" if trend1_req.key else "*"
     title_pattern = f"*{trend1_req.theme}*" if trend1_req.theme else "*"
     area_pattern = f"*{trend1_req.area}*" if trend1_req.area else "*"
+    applicant_pattern = f"*{trend1_req.applicant}*" if trend1_req.applicant else "*"
 
     current_year = datetime.now().year
     start_year = current_year - 10
@@ -367,6 +375,7 @@ def patent_trend1(body):  # noqa: E501
                     {"wildcard": {"summary.keyword": summary_pattern}},
                     {"wildcard": {"title.keyword": title_pattern}},
                     {"wildcard": {"application_area_code": area_pattern}},
+                    {"wildcard": {"applicant_name.keyword": applicant_pattern}},
                     {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
                 ]
             }
@@ -444,6 +453,7 @@ def patent_trend2(body):  # noqa: E501
     summary_pattern = f"*{trend2_req.key}*" if trend2_req.key else "*"
     title_pattern = f"*{trend2_req.theme}*" if trend2_req.theme else "*"
     area_pattern = f"*{trend2_req.area}*" if trend2_req.area else "*"
+    applicant_pattern = f"*{trend2_req.applicant}*" if trend2_req.applicant else "*"
 
     current_year = datetime.now().year
     start_year = current_year - 10
@@ -457,6 +467,7 @@ def patent_trend2(body):  # noqa: E501
                     {"wildcard": {"summary.keyword": summary_pattern}},
                     {"wildcard": {"title.keyword": title_pattern}},
                     {"wildcard": {"application_area_code": area_pattern}},
+                    {"wildcard": {"applicant_name.keyword": applicant_pattern}},
                     {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
                 ]
             }
@@ -562,6 +573,7 @@ def patent_type(body):  # noqa: E501
 
     summary_pattern = f"*{type_req.key}*" if type_req.key else "*"
     title_pattern = f"*{type_req.theme}*" if type_req.theme else "*"
+    applicant_pattern = f"*{type_req.applicant}*" if type_req.applicant else "*"
 
     must_clauses = []
     should_clauses = []
@@ -573,6 +585,8 @@ def patent_type(body):  # noqa: E501
         must_clauses.append({"wildcard": {"summary.keyword": summary_pattern}})
     if type_req.theme:
         must_clauses.append({"wildcard": {"title.keyword": title_pattern}})
+    if type_req.applicant:
+        must_clauses.append({"wildcard": {"applicant_name.keyword": applicant_pattern}})
 
     if not must_clauses and not should_clauses:
         # 如果没有传入任何参数，进行全匹配查询
@@ -824,6 +838,7 @@ def patent_concentration(body):  # noqa: E501
     summary_pattern = f"*{concentration_req.key}*" if concentration_req.key else "*"
     title_pattern = f"*{concentration_req.theme}*" if concentration_req.theme else "*"
     area_pattern = f"*{concentration_req.area}*" if concentration_req.area else "*"
+    applicant_pattern = f"*{concentration_req.applicant}*" if concentration_req.applicant else "*"
 
     current_year = datetime.now().year
     start_year = current_year - 10
@@ -837,6 +852,7 @@ def patent_concentration(body):  # noqa: E501
                     {"wildcard": {"summary.keyword": summary_pattern}},
                     {"wildcard": {"title.keyword": title_pattern}},
                     {"wildcard": {"application_area_code": area_pattern}},
+                    {"wildcard": {"applicant_name.keyword": applicant_pattern}},
                     {"range": {"application_date": {"gte": f"{start_year}-01-01", "lte": f"{current_year}-12-31"}}}
                 ]
             }
@@ -942,6 +958,7 @@ def patent_technology(body):  # noqa: E501
     area_pattern = f"*{technology_req.area}*" if technology_req.area else "*"
     key_pattern = f"*{technology_req.key}*" if technology_req.key else "*"
     theme_pattern = f"*{technology_req.theme}*" if technology_req.theme else "*"
+    applicant_pattern = f"*{technology_req.applicant}*" if technology_req.applicant else "*"
 
     must_clauses = []
     should_clauses = []
@@ -955,6 +972,8 @@ def patent_technology(body):  # noqa: E501
         must_clauses.append({"wildcard": {"summary.keyword": key_pattern}})
     if technology_req.theme:
         must_clauses.append({"wildcard": {"title.keyword": theme_pattern}})
+    if technology_req.applicant:
+        must_clauses.append({"wildcard": {"applicant_name.keyword": applicant_pattern}})
 
     if not must_clauses and not should_clauses:
         query = {

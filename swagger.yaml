@@ -531,6 +531,8 @@ definitions:
         type: string
       area:
         type: string
+      applicant:
+        type: string
       key:
         type: string
       theme:

@@ -14,13 +14,15 @@ class TechnologyReq(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, industry: str=None, area: str=None, key: str=None, theme: str=None):  # noqa: E501
+    def __init__(self, industry: str=None, area: str=None, applicant: str=None, key: str=None, theme: str=None):  # noqa: E501
         """TechnologyReq - a model defined in Swagger
 
         :param industry: The industry of this TechnologyReq.  # noqa: E501
         :type industry: str
         :param area: The area of this TechnologyReq.  # noqa: E501
         :type area: str
+        :param applicant: The applicant of this TechnologyReq.  # noqa: E501
+        :type applicant: str
         :param key: The key of this TechnologyReq.  # noqa: E501
         :type key: str
         :param theme: The theme of this TechnologyReq.  # noqa: E501
@@ -29,6 +31,7 @@ class TechnologyReq(Model):
         self.swagger_types = {
             'industry': str,
             'area': str,
+            'applicant': str,
             'key': str,
             'theme': str
         }
@@ -36,11 +39,13 @@ class TechnologyReq(Model):
         self.attribute_map = {
             'industry': 'industry',
             'area': 'area',
+            'applicant': 'applicant',
             'key': 'key',
             'theme': 'theme'
         }
         self._industry = industry
         self._area = area
+        self._applicant = applicant
         self._key = key
         self._theme = theme
 
@@ -96,6 +101,27 @@ class TechnologyReq(Model):
         """
 
         self._area = area
+
+    @property
+    def applicant(self) -> str:
+        """Gets the applicant of this TechnologyReq.
+
+
+        :return: The applicant of this TechnologyReq.
+        :rtype: str
+        """
+        return self._applicant
+
+    @applicant.setter
+    def applicant(self, applicant: str):
+        """Sets the applicant of this TechnologyReq.
+
+
+        :param applicant: The applicant of this TechnologyReq.
+        :type applicant: str
+        """
+
+        self._applicant = applicant
 
     @property
     def key(self) -> str:
