@@ -1057,7 +1057,7 @@ def report_detail(body):  # noqa: E501
         return make_cors_response(jsonify({'message': 'Database connection failed'}), 500)
 
     cursor = connection.cursor(dictionary=True)
-    query = """select * from patent_ai_assistant.biz_patent_report_detail where report_id = %s;"""
+    query = """select d.*,r.title from patent_ai_assistant.biz_patent_report_detail d left join biz_patent_report r on r.id =d.report_id where report_id = %s;"""
 
     cursor.execute(query, (detail_req.id,))
     results = cursor.fetchall()
@@ -1065,7 +1065,7 @@ def report_detail(body):  # noqa: E501
 
     if results:
         response = {
-            'data': [{'type': row['type'], 'sub_title': row['sub_title'], 'content': row['content'],
+            'data': [{'type': row['type'],'title': row['title'],  'sub_title': row['sub_title'], 'content': row['content'],
                       "is_deleted": row['is_deleted'],
                       'status': row['status'], 'data': row['data']} for row in results]
         }
