@@ -450,7 +450,7 @@ def patent_trend2(body):  # noqa: E501
     category_ids = get_category_id_from_es(es, industry_pattern)
 
     if not category_ids:
-        return make_cors_response(jsonify({'message': 'No matching category IDs found'}), 200)
+        return make_cors_response(jsonify({'data': []}), 200)
 
     summary_pattern = f"*{trend2_req.key}*" if trend2_req.key else "*"
     title_pattern = f"*{trend2_req.theme}*" if trend2_req.theme else "*"
