@@ -54,7 +54,7 @@
 
 <body>
   <div class="wrapper">
-    <p class="p-tit">一篇关于广东地区印刷行业的技术专利报告</p>
+    <p class="p-tit" id="pageTitle"></p>
     <div class="box">
       <p class="title">技术背景和目标</p>
       <p class="txt" id="patent_trend1_txt">
@@ -375,9 +375,9 @@
         const option = {
           animation: false,
           animation: false,
-          title: {
-            text: 'Stacked Line'
-          },
+          // title: {
+          //   text: 'Stacked Line'
+          // },
           tooltip: {
             trigger: 'axis'
           },
@@ -390,11 +390,11 @@
             bottom: '3%',
             containLabel: true
           },
-          toolbox: {
-            feature: {
-              saveAsImage: {}
-            }
-          },
+          // toolbox: {
+          //   feature: {
+          //     saveAsImage: {}
+          //   }
+          // },
           xAxis: {
             type: 'category',
             boundaryGap: false,
@@ -623,40 +623,57 @@
     return Object.fromEntries(searchParams.entries());
   }
 
-  // const query = getUrlParams();
-  // if (query.id) {
-  //   $.ajax({
-  //     url: 'http://110.42.103.198:22440/v1/report/detail',
-  //     type: 'POST',
-  //     dataType: 'json',
-  //     contentType: 'application/json',
-  //     data: JSON.stringify({ id: parseInt(query.id) }),
-  //     success: function (result) {
-  //       if (result && result.data) {
-  //         result.data.forEach(item => {
-  //           renderPage[item.type](item)
-  //         });
-  //       }
-  //     }
-  //   });
-  // }
-window.onload = function () {
+  const query = getUrlParams();
+  if (query.id) {
+    $.ajax({
+      url: 'http://110.42.103.198:22440/v1/report/detail',
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify({ id: parseInt(query.id) }),
+      success: function (result) {
+        if (result && result.data) {
+
+          if (result.data.length > 0) {
+            const pageTitle = document.getElementById('pageTitle');
+            pageTitle.innerHTML = result.data[0].title;
+          }
+
+          result.data.forEach(item => {
+            renderPage[item.type](item)
+          });
+        }
+      }
+    });
+  }
+
+
+  window.onload = function () {
     window.data = {{ data | tojson }}
-    const id = window.data.id;
+  const id = window.data.id;
   if (id) {
     $.ajax({
-      // url: 'http://110.42.103.198:22440/v1/report/detail',
-      url: 'http://127.0.0.1:8080/v1/report/detail',
+      url: 'http://110.42.103.198:22440/v1/report/detail',
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({ id: parseInt(id) }),
       success: function (result) {
+
         if (result && result.data) {
+
+          if (result.data.length > 0) {
+            const pageTitle = document.getElementById('pageTitle');
+            pageTitle.innerHTML = result.data[0].title;
+          }
+
           result.data.forEach(item => {
             renderPage[item.type](item)
           });
         }
+
+
+
       }
     });
   }
