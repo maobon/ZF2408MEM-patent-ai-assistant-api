@@ -352,7 +352,7 @@ def patent_trend1(body):  # noqa: E501
 
     es = create_es_connection()
     if es is None:
-        return make_cors_response(jsonify({'message': 'Elasticsearch connection failed'}), 500)
+        return make_cors_response(jsonify({'data': []}), 500)
 
     industry_pattern = f"*{trend1_req.industry}*" if trend1_req.industry else "*"
     category_ids = get_category_id_from_es(es, industry_pattern)
@@ -835,7 +835,7 @@ def patent_concentration(body):  # noqa: E501
     category_ids = get_category_id_from_es(es, industry_pattern)
 
     if not category_ids:
-        return make_cors_response(jsonify({'message': 'No matching category IDs found'}), 200)
+        return make_cors_response(jsonify({'data': []}), 200)
 
     summary_pattern = f"*{concentration_req.key}*" if concentration_req.key else "*"
     title_pattern = f"*{concentration_req.theme}*" if concentration_req.theme else "*"
