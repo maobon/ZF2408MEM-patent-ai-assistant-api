@@ -305,6 +305,8 @@ def patent_area(body):  # noqa: E501
 
         # 通过所有可能的区域来填充数据
         all_areas = set(area for year_data in areas_dict.values() for area in year_data.keys())
+        if not all_areas:
+            return make_cors_response(jsonify({'message': 'No data found', 'data': []}), 200)
 
         for area in all_areas:
             area_data = {
