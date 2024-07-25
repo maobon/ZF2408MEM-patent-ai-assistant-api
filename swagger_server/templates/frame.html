@@ -194,7 +194,7 @@
 
     },
     patent_trend2: function (newValue) {
-      const initChart = (result) => {
+      const initChart = (result, max, interval) => {
 
         const option = {
           animation: false,
@@ -215,9 +215,9 @@
             {
               type: 'value',
               name: '专利数量',
-              // min: 0,
-              // max: 250,
-              interval: 50,
+              min: 0,
+              max,
+              interval,
               axisLabel: {
                 formatter: '{value}'
               }
@@ -297,8 +297,22 @@
             apply_nums: apply_nums,
             percent
           };
-
-          initChart(result);
+          function getClosestMultipleOfTen(num) {
+            if (num < 5) {
+              return num
+            }
+            const remainder = num % 10;
+            if (remainder < 5) {
+              return num - remainder;
+            } else {
+              return num + (10 - remainder);
+            }
+          }
+          const arr = apply_nums?.sort((a, b) => b - a);
+          const max = arr[0];
+          let interval = max ? max / 10 : 50;
+          interval = getClosestMultipleOfTen(interval);
+          initChart(result, max, interval);
 
         }
       }
@@ -417,7 +431,7 @@
 
         if (jsonData) {
           const series = [];
-          jsonData.areas.forEach(item => {
+          jsonData?.areas?.forEach(item => {
             series.push({
               name: item.area,
               type: 'line',
@@ -496,17 +510,13 @@
       const initChart = (formattedData) => {
         const option = {
           animation: false,
-          // title:{
-          //         text:'矩形树',
-          //         left: 'center',     // 设置标题水平居中
-          //         top: 20             // 设置标题距离顶部的距离为20像素
-          //     },
-          //     tooltip: {        //浮窗效果
-          //     },
           series: [
             {
-              // name:'11111111',           
               type: 'treemap',     //图例样式，矩形树
+              roam: false,
+              breadcrumb: {
+                show: false
+              },
               levels: [
                 // 第一个层级的配置
                 {
@@ -516,24 +526,7 @@
                     borderWidth: 4,       // 边框宽度
                     gapWidth: 1,          // 矩形之间的间隔宽度
                   },
-                  // // 设置上方标签的显示方式
-                  // upperLabel: {
-                  //     show: false,  // 是否显示上方标签
-                  // },
                 },
-                // 第二个层级的配置
-                // {
-                //     // 设置每个矩形的边框样式
-                //     itemStyle: {
-                //         borderColor: '#ffffff',  // 边框颜色
-                //         borderWidth: 2,       // 边框宽度
-                //         gapWidth: 1,          // 矩形之间的间隔宽度
-                //     },
-                //     // 设置上方标签的显示方式
-                //     upperLabel: {
-                //         show: false,  // 是否显示上方标签
-                //     },
-                // },
               ],
               data: formattedData
             }
@@ -550,7 +543,7 @@
 
         if (jsonData) {
           const formattedData = jsonData.data?.map(item => ({
-            name: item.class + item.num,
+            name: item.name + item.num,
             value: item.num
           }));
 
@@ -671,8 +664,6 @@
             renderPage[item.type](item)
           });
         }
-
-
 
       }
     });
