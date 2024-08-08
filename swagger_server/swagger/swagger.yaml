@@ -496,7 +496,7 @@ components:
       type: object
       properties:
         report_id:
-          type: integer
+          type: string
         type:
           type: string
         sub_title:
